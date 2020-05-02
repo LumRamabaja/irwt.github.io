@@ -12,7 +12,7 @@ author:
   image: 'authorimage.jpg'
   greetings: "A blog about the stuff that interests me. Includes topics from decentralised systems, algorithms, biology, and more."
 favicon: 'assets/images/favicon.ico'
-baseurl: 
+baseurl: irwt.io
 production_url: https://royce.netlify.com/
 disqus: 'Lum'
 #mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
