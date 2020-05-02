@@ -1,44 +1,37 @@
-plugins:
-  - jekyll-feed
-title: Lum's blog
-author: Lum Ramabaja
 # Site setings
-name: 'Lum Ramabaja'
-description: 'Researcher'
-#meta_description: 'Jekyll template, minimal style, perfect for bloggers.'
+name: 'Royce'
+description: 'Web Developer'
+meta_description: 'Jekyll template, minimal style, perfect for bloggers.'
 logo:
 # Author image is used in site sidebar and greetings in the home page hero text
 author:
   image: 'authorimage.jpg'
-  greetings: "A blog about the stuff that interests me. Includes topics from decentralised systems, algorithms, biology, and more."
+  greetings: "Hi there! My name is Charles Lavoie. I'm a freelance web developer, author and speaker based in Montreal, Canada. It’s nice to meet you."
 favicon: 'assets/images/favicon.ico'
-baseurl:
+baseurl: 
 production_url: https://royce.netlify.com/
-disqus: 'Lum'
-#mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
+disqus: 'justgoodthemes'
+mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
 # Add your GA Tracking Id
 ga_analytics: 
 
-use_math: true
 # Contact form setings
-email: lumramabaja@gmail.com
-contact_page_description: "Ask me anything!"
-thankyou_page_description: "Your message has been successfully sent!"
+email: youremail@email.com
+contact_page_description: "Horace theme comes with a contact form built-in. You can use this form with Formspree service and get up to 50 submissions for free. Also, you can easily switch to another service if you want."
+thankyou_page_description: "Your message has been successfully sent. We will contact you very soon!"
 
 # Social links
-twitter: 'LumRamabaja'
-#facebook: 'username'
-github: 'LumRamabaja'
-metoken: '0xd9c796cA89EeDCc26165026FaDBDc3deD42009a8'
-rss: 'https://irwt/feed.xml '
-#codepen: 'username'
-#dribbble: 'username'
-#medium: '@username'
-#instagram: 'username'
-#pinterest: 'username'
-#linkedin: 'username'
-#producthunt: '@username'
-#quora: 'username'
+twitter: 'justgoodthemes'
+facebook: 'username'
+github: 'justgoodthemes'
+codepen: 'username'
+dribbble: 'username'
+medium: '@username'
+instagram: 'username'
+pinterest: 'username'
+linkedin: 'username'
+producthunt: '@username'
+quora: 'username'
 
 # Navigation
 navigation:
@@ -46,8 +39,8 @@ navigation:
     url: /
   - text: About
     url: /about
-  #- text: Style Guide
-  #  url: /style-guide
+  - text: Style Guide
+    url: /style-guide
   - text: Contact Me
     url: /contact
   - text: Search
