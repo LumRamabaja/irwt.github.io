@@ -1,7 +1,3 @@
-plugins:
-  - jekyll-feed
-title: Lum's blog
-author: Lum Ramabaja
 # Site setings
 name: 'Lum Ramabaja'
 description: 'Researcher'
@@ -30,7 +26,6 @@ twitter: 'LumRamabaja'
 #facebook: 'username'
 github: 'LumRamabaja'
 metoken: '0xd9c796cA89EeDCc26165026FaDBDc3deD42009a8'
-rss: 'https://lums.blog/feed.xml '
 #codepen: 'username'
 #dribbble: 'username'
 #medium: '@username'
