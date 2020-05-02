@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using binary vector clocks to replace Ethereum transaction nonces | Lum’s blog</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Using binary vector clocks to replace Ethereum transaction nonces" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Contents Contents" />
+<meta property="og:description" content="Contents Contents" />
+<link rel="canonical" href="http://localhost:4000/The-Binary-Vector-Clock" />
+<meta property="og:url" content="http://localhost:4000/The-Binary-Vector-Clock" />
+<meta property="og:site_name" content="Lum’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-02T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Using binary vector clocks to replace Ethereum transaction nonces" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"url":"http://localhost:4000/The-Binary-Vector-Clock","headline":"Using binary vector clocks to replace Ethereum transaction nonces","dateModified":"2020-05-02T00:00:00+02:00","datePublished":"2020-05-02T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/The-Binary-Vector-Clock"},"description":"Contents Contents","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="http://localhost:4000/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Lum Ramabaja</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Researcher</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/LumRamabaja" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/LumRamabaja" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://stakeonme.com/Token/0xd9c796cA89EeDCc26165026FaDBDc3deD42009a8" target="_blank">
+        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Ethereum icon</title><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg>
+    </a>
+    
+    
+    <a href="https://irwt/feed.xml " target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2020-05-02">
+                    May 2, 2020
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Using binary vector clocks to replace Ethereum transaction nonces</h1>
+            
+            <p class="post-tags">
+                <a href="/tags/index.html#Paper"
+                    rel="tag">Paper</a>
+                <a href="/tags/index.html#Vector+Clock"
+                    rel="tag">Vector Clock</a>
+                <a href="/tags/index.html#Ethereum"
+                    rel="tag">Ethereum</a>
+                
+            </p>
+            
+        </header><!-- .post-header -->
+
+        
+        <div class="post-thumbnail">
+            <img src="assets/images/posts/2020/e_l_The_fortress_of_Tepelena.jpg" alt="Using binary vector clocks to replace Ethereum transaction nonces">
+        </div>
+        
+        <div class="post-content">
+            <h1 id="contents">Contents</h1>
+<ol id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#abstract" id="markdown-toc-abstract">abstract</a></li>
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+  <li><a href="#the-order-of-ethereum-transactions" id="markdown-toc-the-order-of-ethereum-transactions">The order of Ethereum Transactions</a></li>
+  <li><a href="#partial-orders-and-join-semilattices" id="markdown-toc-partial-orders-and-join-semilattices">Partial Orders and Join-Semilattices</a></li>
+  <li><a href="#the-binary-vector-clock" id="markdown-toc-the-binary-vector-clock">The Binary Vector Clock</a></li>
+  <li><a href="#the-inevitable-total-order-during-epoch-jumps" id="markdown-toc-the-inevitable-total-order-during-epoch-jumps">The inevitable total order during epoch jumps</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ol>
+
+<h1 id="abstract">abstract</h1>
+<p>In this blog post, I’ll present the idea of a Binary Vector Clock, a simple, yet space-efficient algorithm for generating a partial order of transactions in account-based blockchain systems. The Binary Vector Clock solves the problem of order dependency in systems such as Ethereum, caused by the total order of transactions that come from the same address holder. What that exactly means will become clear in a bit. The proposed algorithm has the same security as using regular transaction nonces, requires very little overhead, and can potentially result in a significant increase in throughput for systems like Ethereum. This paper was originally submitted on the 15th of April, 2020 on <a href="https://arxiv.org/abs/2004.07087">arxiv</a>.</p>
+
+<h1 id="introduction">Introduction</h1>
+<p>There are generally two kinds of transaction models in blockchains: The UTXO model, and the account based model. The UTXO model was the first transaction model to be proposed and has many intriguing properties. In this paper however, we are going to focus on the account based model, more exactly on the one implemented by Ethereum. In the account based model, instead of having coins as unspent outputs like in the UTXO model, every participating node has an account, or a balance. When a transaction is created, the transaction’s value is simply reduced from the owners account, and added to someone else’s account. To understand the problem that the Binary Vector Clock tries to solve, let’s first look at the structure of an Ethereum transaction and how the <em>order</em> of transactions is determined.</p>
+
+<h1 id="the-order-of-ethereum-transactions">The order of Ethereum Transactions</h1>
+<p>A transaction in Ethereum is essentially a message that gets signed by an account holder, also known as an externally owned account. Once a transaction gets created, it is broadcast to other nodes in the system, and eventually recorded by the Ethereum blockchain. The structure of an Ethereum transaction consist of:</p>
+
+<ul>
+  <li>A <em>value</em> (the amount of ether we want to transfer).</li>
+  <li>A <em>recipient</em> (the address of the account to whom we want to send the transaction to).</li>
+  <li>A <em>gas price</em> (much like a transaction fee. The gas price shows how much of a fee the originator of the transaction is willing to pay).</li>
+  <li>A <em>gas limit</em> (the maximum fee that the originator is willing to pay).</li>
+  <li><em>v,r,s</em> (the three ECDSA digital signature components to prove that the originator truly formed the transaction).</li>
+  <li>A <em>data</em> field (an optional field that can contain code, for when an account interacts with smart contracts).</li>
+  <li>And the <em>nonce</em> (an account specific counter. Whenever a transaction from the address holder gets confirmed, the counter increments).</li>
+</ul>
+
+<p>The nonce field is the field that is of particularly interest to us. The transaction nonce, not to be confused with the block nonce used for Proof of Work, is a scalar value that serves as a counter. The nonce shows the number of confirmed transactions that originated from the account. Having such a counter for each transaction has an interesting effect: It protects the user from transaction duplication. Let’s see what would happen if transactions had no nonce, to better understand why having such a counter is so important: Let’s say Alice sent Bob a completely valid transaction containing three ether. The signature turned out to be truly Alice’s, and the transaction got recorded on the blockchain. Bob however turns out to have a bad moral compass and wants more money. Without a transaction nonce, there is nothing to stop Bob from “replaying” Alice’s transaction, and claim again three ether. Bob could in fact repeat transmitting Alice’s old transaction to the network, until he gets all of Alice’s ether. Every time the transaction would be replayed, nodes in the system would think that it is a new transaction. In reality however, this is not what happens. By having a counter attached to the transaction, every transaction becomes unique. If let’s say Alice’s transaction has a nonce of 42, Bob will not be able to replay that transaction, as any new transaction coming from Alice would have to have a nonce greater than 42.</p>
+
+<p>There is however also another important reason to have a nonce in an account-based transaction: We want to be able to determine the <em>order</em> of transactions. Let’s assume this time that Alice is sending two transactions, but the second transaction is dependent on the first one, i.e. running the second transaction before the first one is invalid (for whatever reason). In a centralized system this is no problem, one would simply confirm the first transaction first, and than continue with the second transaction. In a decentralized system however, nodes in the network might receive the second transaction before the first one. We cannot know in advance in which order nodes will perceive events. Without a counter, there would be no way for nodes in the network to tell which transaction comes first. If on the other hand the first transaction has a counter of 42 and the other transaction has the next counter (43), the order can be determined. If a node in the network thus receives the second transaction before the first one, it knows that it should ignore the second transaction, until the first transaction gets confirmed.</p>
+
+<p>This is a great feature, but it also has its shortcomings. If Alice were to send several transactions one after another, and one of the transactions does not get included in any block for some reason, e.g. the transaction turns out to be invalid, then none of the subsequent transactions get processed. Only after providing a transaction with the missing nonce, do all the other transactions get processed. 
+This is no problem if every transaction depends on the previous one, but in most real-world applications that would not be the case. Many nodes have to create dozens of transactions in a short period of time, imposing an order dependency thus can result in transactions having to stay in mempools, even if they could have been processed sooner. The total order of transactions represents at the same time a great feature, and a serious scaling problem for account-based transaction models. In the following sections, I will present how we can overcome the problem of total order when processing transactions.</p>
+
+<h1 id="partial-orders-and-join-semilattices">Partial Orders and Join-Semilattices</h1>
+<p>Before jumping straight to how the Binary Vector Clock works, it is necessary to have a good grasp of what a partial order is. All of us intuitively understand the idea of “total orders” - One is smaller than two, five is greater than four, etc. In order theory, a set is said to have a total order, if for any element $a$ and $b$, a comparison is possible, i.e. either $a \leq b$ or $a \geq b$. For example: Every transaction nonce for an address, is comparable to any other transaction nonce for that address. We thus can easily know which transaction happened-before another transaction, thanks to the total order of transactions. But what if it does not matter in which order some of our transactions get confirmed? If eight out of ten transactions generated from an address holder could in fact be confirmed in any desired order, it would be quite wasteful not to do so. This is however what happens in today’s totally ordered account based transaction model.</p>
+
+<p>It would thus be of enormous interest if we could somehow “capture” the transaction independence for address holders. This is where partial orders become useful. A partially ordered set, is a set in which only certain pairs of elements are comparable, i.e. one element precedes the other in the ordering, but not every pair of elements is necessarily comparable.</p>
+
+<p align="center">
+  <img width="300" height="300" src="/assets/images/posts/2020/semilattice.png" />
+</p>
+
+<p>As an example to better understand what a partial order actually is, let’s look at the join-semilattice in figure 1. The diagram shows a set $S$ with eight vectors. We say that an element in $S$ ‘‘happened-before’’ another element, if and only if every value of vector $a$ is less than or equal to every corresponding value in vector $b$. For example: We can conclude that vector $(1,0,0)$ happened before vector $(1,1,0)$, because none of the values in vector $(1,0,0)$ are greater than in vector $(1,1,0)$ - We say that $(1,0,0)$ happened-before $(1,1,0)$. If on the other hand we try to compare vector $(1,1,0)$ and $(1,0,1)$, one can see that both vectors have values larger than the other vector at some indices. We say that this pair is <em>not comparable</em>. One cannot determine which element occurred before the other one. Algorithms used in distributed systems, such as vector clocks, take advantage of partial orders. In the context of the distributed systems, having incomparable vectors, or “clocks”, usually means that the events occurred concurrently, and thus have no information of one another. In the case of the Binary Vector Clock on the other hand, incomparableness between two transactions does not indicate concurrency, it indicates that they occur <em>independently</em>.</p>
+
+<h1 id="the-binary-vector-clock">The Binary Vector Clock</h1>
+<p>Let’s imagine that instead of a nonce (i.e. counter) for a transaction, we have a counter <em>and</em> a very small bit array (for the sake of a better explanation, let’s stick to three bits, like the vectors in figure 1. Alice’s Binary Vector Clock is initially set to $(0, [0,0,0])$ (where the first element represents the counter and the second element the bit array). For simplicity, I will refer to the Binary Vector Clock from now on as a “timestamp”. Now let’s say Alice wants to send three transactions one after another. Alice however knows that her second transaction is dependent on her first transaction, but her third transaction has no logical dependency to the two first transactions. Having this information, Alice can do something clever: Instead of incrementing her counter for each transaction, she increments one of the bits in her bit array. Let’s say the first transaction has the timestamp $(0,[0,0,1])$, the second transaction has the timestamp  $(0,[0,1,1])$, and the third timestamp is $(0,[1,0,0])$. All three transactions were send one after another to the network. Any validator receiving the transactions can independently know in what order the transactions need to be confirmed (or if any order exists at all). Validators first look at the counter, the counter tells a validator if the transaction is in the right “epoch” (more on that in a bit). If the counter is equal to the previously confirmed transaction from that address, the bit array is checked. As the bit array of the first and third transaction are not comparable (no order can be determined), even if the first transaction turns out to be invalid for some reason, the third transaction can still be processed by the validators. This is because both timestamps are indicating “independentness”, there is no “happened-before” relationship between them. The second and the first transaction on the other hand do have a “happened-before” relationship. When looking at the bit array of the second transaction, we can conclude that it must have happened after the first transaction. If a validator thus would receive the third transaction and the second transaction, but not the first transaction for some reason, it would know that the third transaction can be processed, but the second transaction not, as it depends on a prior transaction (the first transaction). If a transaction gets confirmed, the address’ Binary Vector Clock gets simply added with the newly confirmed timestamp. Taking again the three transactions from the previous scenario as an example, if Alice’s initial timestamp was $(0,[0,0,0])$, and her first and third transactions get confirmed, her new timestamp would be $(0,[1,0,1])$. Once all the bits in the bit array are turned to one, we can increment the timestamp’s counter, and set the bit array to zero again. We call this shift an “epoch”.</p>
+
+<p>Up to this point, some of the readers might have already thought something in the lines of: But what if Alice has only one ether, and she creates three independent transactions, each spending one ether? It is important to remember that this is an issue only if transactions would be processed concurrently, which is not the case with the Binary Vector Clock technique. In cases like the one mentioned above, transactions would be treated the same way today’s transactions get treated, if they were to have the same nonce. Today, with the nonce approach, if transactions have the same nonce, one of the transactions would get confirmed (depending on the block creator) and the rest of the transactions would become invalid. In the case of the Binary Clock, one of Alice’s transactions (depending on the block creator) would get confirmed, while the rest of the transactions would simply be considered invalid, regardless of their order independency.</p>
+
+<h1 id="the-inevitable-total-order-during-epoch-jumps">The inevitable total order during epoch jumps</h1>
+<p>It is important to note that there is nonetheless an inevitable transaction processing dependency when shifting from one epoch to the next. Transactions from one epoch can only be processed independently, after the transactions of the previous epoch were already processed. In other words if Alice were to send three other transactions one after the other, where the first transaction would have a timestamp of $(0,[1,1,1])$, second transaction $(1,[1,0,0])$, and third transaction $(1,[0,0,1])$, even if all three transactions are completely independent from one another, the second and third transactions will not be able to get processed without the first one being confirmed first. This is because these transactions occurred during an epoch “jump”, i.e. the Binary Vector Clock gets incremented, and the bit array becomes set to zero. The transactions in the new epoch cannot know if they are comparable or not with the transaction from the previous epoch, forcing a momentary total order. I argue however that the space-wise inexpensive nature of the Binary Vector Clock, and its property to handle partial orders, makes it an attractive technique for the account-based transaction model, even in the case of momentary order dependencies between epoch jumps.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+<p>In This paper I introduced the Binary Vector Clock, a memory-wise inexpensive partially ordered counter for account-based transactions, that solves the issue of order dependency when processing transactions. Note that the Binary Vector Clock does not suggest the concurrent processing of transactions in Ethereum. Doing so would in fact introduce many possible attack vectors to the system. It only specifies which transactions can be processed independently, and which ones depend on a prior transaction confirmation. If for example an address generates $N$ transactions one after another, and the first transaction fails, the subsequent transactions are still able to get processed and confirmed by the blockchain. This is not the case in today’s approach with transaction nonces. In today’s approach, if the first transaction fails for some reason, all of the other transactions would need to be ignored until the gap in the nonce becomes filled. The Binary Vector Clock overcomes the issue by introducing a partial order between transactions of the same address holder. Using the Binary Vector Clock as a substitution for the transaction nonce gives more freedom to the user in determining transaction orders. The Binary Vector Clock allows the user to specify if a transaction can be processed  independently from other transactions, or if it should be queued until a certain transaction gets confirmed. I argue that this ability has important implications for blockchain systems. Considering that transactions in blockchain systems most likely follow a pareto distribution (the majority of transactions are generated by very few nodes), introducing an inexpensive technique that allows for independent processing of transactions, could potentially increase the scaling capability of Ethereum and other account-based blockchains significantly.</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Using+binary+vector+clocks+to+replace+Ethereum+transaction+nonces&amp;url=https://royce.netlify.com/The-Binary-Vector-Clock">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://royce.netlify.com/The-Binary-Vector-Clock">Facebook</a>
+            </div><!-- .share-post -->
+        </footer>
+        
+<section id="comments-area" class="comments-area">
+    <h2 class="comments-title">Comments</h2>
+    <div class="comments-inside">
+        <div id="disqus_thread"></div>
+    </div><!-- .comments-inside -->
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section><!-- .comments-area -->
+<script type="text/javascript">
+    var disqus_shortname = 'Lum';
+    var disqus_developer = 0;
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = window.location.protocol + '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+</section>
+
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        
+    </section><!-- .read-next -->
+
+    <!-- Create a sorted array of tags -->
+     
+    <section class="tagcloud inner">
+        <h2 class="tagcloud-title">Tags</h2>
+        <div class="tag-links">
+            
+            <a href='/tags/#Ethereum'>Ethereum</a>
+            
+            <a href='/tags/#Paper'>Paper</a>
+            
+            <a href='/tags/#Vector+Clock'>Vector Clock</a>
+            
+        </div><!-- .tag-links -->
+    </section><!-- .tagcloud -->
+
+</main><!-- .site-main -->
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Lum Ramabaja</a> &copy; 2020. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+    }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
