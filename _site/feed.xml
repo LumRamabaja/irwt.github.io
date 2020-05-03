@@ -5,9 +5,35 @@
     <description>Researcher</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2020 00:02:14 +0200</pubDate>
-    <lastBuildDate>Mon, 04 May 2020 00:02:14 +0200</lastBuildDate>
+    <pubDate>Mon, 04 May 2020 00:06:08 +0200</pubDate>
+    <lastBuildDate>Mon, 04 May 2020 00:06:08 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>The Competitive Neuron - On the Formation of Memories and Neuronal Specialization</title>
+        <description>&lt;h1 id=&quot;contents&quot;&gt;Contents&lt;/h1&gt;
+&lt;h2 id=&quot;part-one&quot;&gt;Part One&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;lums.blog/the-blind-men-beyond-ghor&quot;&gt;The Blind Men Beyond Ghor&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;E Pluribus Unum&lt;/li&gt;
+  &lt;li&gt;The Neuron&lt;/li&gt;
+  &lt;li&gt;…&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 03 May 2020 00:00:00 +0200</pubDate>
+        <link>http://localhost:4000/The-Competitive-Neuron</link>
+        <guid isPermaLink="true">http://localhost:4000/The-Competitive-Neuron</guid>
+        
+        <category>Book</category>
+        
+        <category>Neuroscience</category>
+        
+        <category>Neurons</category>
+        
+        <category>Memory</category>
+        
+        
+      </item>
     
       <item>
         <title>The Blind Men Beyond Ghor</title>
@@ -42,35 +68,9 @@
 
 &lt;p&gt;Instead of immediately trying to answer the big questions, we are going to ask well defined biological questions, like the ones mentioned earlier. We are then going to use the proposed answers to those questions as puzzle pieces for bigger questions, like ‘‘How are memories stored?’’. Often times knowing how to ask the right questions is even more important than the question itself. We will not only examine the Koha model, but the biological structures from which it emerges as well. We will see how many of the questions in neurobiology, including the ones mentioned earlier in this introduction, can be indirectly explained and understood through this model. Even if this hypothesis turns out not to reflect reality, I hope that the facts and the questions asked in this book will help others decipher the mind.&lt;/p&gt;
 </description>
-        <pubDate>Mon, 04 May 2020 00:00:00 +0200</pubDate>
+        <pubDate>Sun, 03 May 2020 00:00:00 +0200</pubDate>
         <link>http://localhost:4000/The-Blind-Men-Beyond-Ghor</link>
         <guid isPermaLink="true">http://localhost:4000/The-Blind-Men-Beyond-Ghor</guid>
-        
-        <category>Book</category>
-        
-        <category>Neuroscience</category>
-        
-        <category>Neurons</category>
-        
-        <category>Memory</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>The Competitive Neuron - On the Formation of Memories and Neuronal Specialization</title>
-        <description>&lt;h1 id=&quot;contents&quot;&gt;Contents&lt;/h1&gt;
-&lt;h2 id=&quot;part-one&quot;&gt;Part One&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;lums.blog/the-blind-men-beyond-ghor&quot;&gt;The Blind Men Beyond Ghor&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;E Pluribus Unum&lt;/li&gt;
-  &lt;li&gt;The Neuron&lt;/li&gt;
-  &lt;li&gt;…&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 03 May 2020 00:00:00 +0200</pubDate>
-        <link>http://localhost:4000/The-Competitive-Neuron</link>
-        <guid isPermaLink="true">http://localhost:4000/The-Competitive-Neuron</guid>
         
         <category>Book</category>
         

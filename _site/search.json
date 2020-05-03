@@ -1,18 +1,18 @@
 [
   
     {
-      "title"    : "The Blind Men Beyond Ghor",
-      "category" : "",
-      "tags"     : "Book, Neuroscience, Neurons, Memory",
-      "url"      : "/The-Blind-Men-Beyond-Ghor",
-      "date"     : "May 4, 2020"
-    } ,
-  
-    {
       "title"    : "The Competitive Neuron - On the Formation of Memories and Neuronal Specialization",
       "category" : "",
       "tags"     : "Book, Neuroscience, Neurons, Memory",
       "url"      : "/The-Competitive-Neuron",
+      "date"     : "May 3, 2020"
+    } ,
+  
+    {
+      "title"    : "The Blind Men Beyond Ghor",
+      "category" : "",
+      "tags"     : "Book, Neuroscience, Neurons, Memory",
+      "url"      : "/The-Blind-Men-Beyond-Ghor",
       "date"     : "May 3, 2020"
     } ,
   
