@@ -10,7 +10,7 @@ hidden: true
 
 # Contents
 ## Part One 
-* [The Blind Men Beyond Ghor](lums.blog/the-blind-men-beyond-ghor)
+* [The Blind Men Beyond Ghor](https://lums.blog/the-blind-men-beyond-ghor)
 * E Pluribus Unum
 * The Neuron 
 * ...

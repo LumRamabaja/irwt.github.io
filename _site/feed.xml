@@ -5,8 +5,8 @@
     <description>Researcher</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2020 00:06:08 +0200</pubDate>
-    <lastBuildDate>Mon, 04 May 2020 00:06:08 +0200</lastBuildDate>
+    <pubDate>Mon, 04 May 2020 00:08:11 +0200</pubDate>
+    <lastBuildDate>Mon, 04 May 2020 00:08:11 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -14,7 +14,7 @@
         <description>&lt;h1 id=&quot;contents&quot;&gt;Contents&lt;/h1&gt;
 &lt;h2 id=&quot;part-one&quot;&gt;Part One&lt;/h2&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;lums.blog/the-blind-men-beyond-ghor&quot;&gt;The Blind Men Beyond Ghor&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lums.blog/the-blind-men-beyond-ghor&quot;&gt;The Blind Men Beyond Ghor&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;E Pluribus Unum&lt;/li&gt;
   &lt;li&gt;The Neuron&lt;/li&gt;
   &lt;li&gt;…&lt;/li&gt;
@@ -37,7 +37,7 @@
     
       <item>
         <title>The Blind Men Beyond Ghor</title>
-        <description>&lt;p&gt;This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the &lt;a href=&quot;lums.blog/The-Competitive-Neuron&quot;&gt;book&lt;/a&gt;.&lt;/p&gt;
+        <description>&lt;p&gt;This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the &lt;a href=&quot;https://lums.blog/The-Competitive-Neuron&quot;&gt;book&lt;/a&gt;.&lt;/p&gt;
 
 &lt;hr /&gt;
 

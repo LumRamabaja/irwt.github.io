@@ -8,7 +8,7 @@ featured: true
 hidden: true
 ---
 
-This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the [book](lums.blog/The-Competitive-Neuron).
+This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the [book](https://lums.blog/The-Competitive-Neuron).
 
 ***
 
