@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation'
-tags: [Book, Neuroscience, Neurones, Memory]
+tags: [Book, Neuroscience, neurons, Memory]
 featured_image_thumbnail:
 featured_image: assets/images/posts/2020/cajal1.jpg
 featured: true
