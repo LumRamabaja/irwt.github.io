@@ -3,7 +3,7 @@ layout: post
 title: 'Using Medoka encoding to compress sparse bitmaps'
 tags: [article, compression, bitmap]
 featured_image_thumbnail:
-featured_image: assets/images/posts/2020/e_l_The_walls_of_Durrës.jpg
+featured_image: assets/images/posts/2020/e_l_The_walls_of_Durres.jpg
 featured: true
 hidden: true
 ---
