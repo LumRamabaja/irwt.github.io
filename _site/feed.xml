@@ -5,9 +5,123 @@
     <description>Researcher</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 07 May 2020 00:38:55 +0200</pubDate>
-    <lastBuildDate>Thu, 07 May 2020 00:38:55 +0200</lastBuildDate>
+    <pubDate>Fri, 15 May 2020 01:02:50 +0200</pubDate>
+    <lastBuildDate>Fri, 15 May 2020 01:02:50 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>Using Medoka encoding to compress sparse bitmaps</title>
+        <description>&lt;p&gt;In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the &lt;a href=&quot;https://en.wikipedia.org/wiki/LZ77_and_LZ78&quot;&gt;LZ family&lt;/a&gt; of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim).&lt;/p&gt;
+
+&lt;p&gt;Before explaining how the encoding scheme works, let’s look at some simple use cases for bitmap compression:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Bitmap_index#Compression&quot;&gt;Bitmap index&lt;/a&gt; compression. Bitmap indices are just bit arrays used in databases to answer queries by performing bitwise logical operations. In some cases however, our data columns can be quite sparse. In other words our bitmap would have a lot of zeros, and just a few ones. When dealing with such cases, we usually try to compress the bitmap, so as to not waste unnecessarily space.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Bloom_filter&quot;&gt;Bloom Filters&lt;/a&gt;. Bloom filters are probabilistic data structures used to test whether an element is a member of a set. They are probabilistic, because false positives can occur while checking for the presence of elements. Bloom filters are also just bit arrays. The ratio of ones and zeros in the bloom filter depends on the chosen parameters of the bloom filter, as well as on the number of elements inserted to the bloom filter. If the difference between zeros and ones is large, it’s better to compress the bloom filter, before sending it to another node.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It’s important to note that in both mentioned cases, if we were to use a compression technique such as LZ77, we would have first to decode the data, before being able to query it. Medoka encoding does not have this problem, one  can directly participate in bitwise operations without decompressing the data.&lt;/p&gt;
+
+&lt;p&gt;Now let’s look at how Medoka encoding works, by following simple Python code:&lt;/p&gt;
+
+&lt;p&gt;First let’s create a random sparse list with ones and zeros:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import numpy as np
+a = (np.random.rand(100) &amp;lt; 0.1).astype(int).tolist()
+print(a)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output will look something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To perform Medoka encoding, we first need to transform the bit array. For the sake of it, let’s call the transformation “sum_transform”:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def sum_transform(a):
+  mapp = {1:1, 0:-1}
+  s = []
+  n = 1
+  prev = a[0]
+  for i in a[1:]:
+      if i == prev:
+          n += 1
+      else:
+          s.append(n * mapp[prev])
+          n = 1
+          prev = i
+  s.append(n * mapp[prev])
+  return s
+
+b = sum_transform(a)
+print(b)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[-7, 2, -3, 1, -3, 1, -19, 1, -7, 2, -2, 1, -18, 1, -20, 1, -11]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As we can see, “sum_transform” takes as input the bit list. To better understand what we’re actually doing at this step, look at both the bit list output, as well as the sum_transform output. The function sums up all the zeros that are next to each other and assigns a negative sign to that integer. It does the same thing to the ones, and assigns a positive sign to the integer.&lt;/p&gt;
+
+&lt;p&gt;Now comes the final step of the Medoka encoding algorithm:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def medoka_encoding(a, symbol):
+    b = [a[0]]
+    for elm in a[1:-1]:
+        if elm != symbol:
+            b.append(elm)
+    b.append(a[-1])
+    return b
+
+c = medoka_encoding(b, 1)
+print(c)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[-7, 2, -3, -3, -19, -7, 2, -2, -18, -20, -11]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For the final step of the Medoka encoding algorithm, we simply specify the most frequent symbol from out “sum_transform step”, which was the number one. We then remove all ones from sum_transform list. What we get at the end is our final array, that is much more compressable now. We can then compress the array either by using &lt;a href=&quot;https://en.wikipedia.org/wiki/Huffman_coding&quot;&gt;Huffman coding&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Exponential-Golomb_coding&quot;&gt;Exponential-Golomb coding&lt;/a&gt;, or any other universal code.&lt;/p&gt;
+
+&lt;p&gt;Of course it wouldn’t be much of an encoding algorithm if all the steps weren’t reversible! To get back to the initial bit array, we simply iterate over the Medoka encoded array. In our case, if two negative numbers occur one after another, we know that we have to insert the number one there. In other words, the sign periodicity of the “sum_transform” step, allows us to infer where a symbol was deleted.&lt;/p&gt;
+
+&lt;p&gt;The code for decoding:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def medoka_decoding(a,symbol):
+  b = []
+  for i in range(len(a)-1):
+      b.append(a[i])
+      if np.sign(a[i]) == np.sign(a[i+1]):
+          b.append(symbol)
+  b.append(a[-1])
+  return b
+
+d = medoka_decoding(c, 1)
+print(d)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[-7, 2, -3, 1, -3, 1, -19, 1, -7, 2, -2, 1, -18, 1, -20, 1, -11]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From here we can easily recreate our initial bit array.&lt;/p&gt;
+
+&lt;p&gt;In this simple example, I used only a single symbol for the deletion step of the Medoka encoding scheme. We can technically use however two symbols, one symbol with a positive sign, and another with a negative sign. If two negative numbers repeat, we insert the positive symbol during the decoding step. If two positive numbers repeat, we insert the negative symbol during the decoding step. Notice however that if both symbols occur next to each other, only one of them can get deleted, otherwise the computational steps become irreversible.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 14 May 2020 00:00:00 +0200</pubDate>
+        <link>http://localhost:4000/medoka-encoding</link>
+        <guid isPermaLink="true">http://localhost:4000/medoka-encoding</guid>
+        
+        <category>article</category>
+        
+        <category>compression</category>
+        
+        <category>bitmap</category>
+        
+        
+      </item>
     
       <item>
         <title>E Pluribus Unum</title>
@@ -15,7 +129,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;The brain is unbelievably complex. Walking in a park, having a conversation with your friends, understanding what you’re reading, hearing, being aware of others’ feelings, these are enormously complex processes. They might seem trivial to us, but when looking at them from a machine’s perspective, we can see how impossibly difficult they really are. All this is somehow governed by a huge cluster of tiny cells in our heads, also known as neurones. A neurone in itself does not ‘‘know’’ anything, it is just a biological machine, but somehow a bunch of neurones together form a consciousness. This, is one of the greatest unsolved mysteries of our time.&lt;/p&gt;
+&lt;p&gt;The brain is unbelievably complex. Walking in a park, having a conversation with your friends, understanding what you’re reading, hearing, being aware of others’ feelings, these are enormously complex processes. They might seem trivial to us, but when looking at them from a machine’s perspective, we can see how impossibly difficult they really are. All this is somehow governed by a huge cluster of tiny cells in our heads, also known as neurons. A neuron in itself does not ‘‘know’’ anything, it is just a biological machine, but somehow a bunch of neurons together form a consciousness. This, is one of the greatest unsolved mysteries of our time.&lt;/p&gt;
 
 &lt;p&gt;It seems like the mind is an emergent property of the brain. ‘‘Emergence’’ is when a system has properties which its parts do not have, but emerge because of rules, or interactions between its parts. Let’s take an ant colony as an example. An ant is pretty dumb. Its decision making abilities are limited, and individually it can’t plan anything ahead. Yet an ant colony is enormously complex and smart. Ants in a colony have different ‘‘jobs’’, perform various collective tasks, and live in self-made structures that are way too complex for the mental capability of a single ant. One could arguably call an ant colony an organism in itself. It can make complex decisions as if it were a single entity, yet under the hood it’s all governed by a decentralised system of tiny, almost brainless ants. Our brains are not much different in that regard. The brain is a collection of dumb machines, that somehow together do very smart things.&lt;/p&gt;
 
@@ -25,15 +139,15 @@
 
 &lt;p&gt;This is precisely why I argue that it is crucial to understand the biology of the brain. If an emergent algorithm significantly helps an organism survive, and as a result enables the organism to have on average more offspring, then any organism with a more optimised circuitry  for the emergent algorithm, will have a bigger advantage over other organisms. This might sound over complicated at first, but what this means, is that over a long time, evolutionary forces will shape the underlying neural circuitry in a way that optimises for the emergent algorithms. This means that it should be possible to reverse engineer the emergent algorithms, by looking at the optimised physical structures and biochemical processes of neural circuits.&lt;/p&gt;
 
-&lt;p&gt;Always remember: In biology, form follows function. If there is a specific pattern in nature, that repeats over and over again in different species, we can be very confident that the repeating pattern has an important role. By looking at the optimised morphology, structures, and processes of different neurones, we can start to guess their purpose in the context of the mind. Notice how I am not saying ‘‘in the context of learning’’, but ‘‘in the context of the mind’’. The ability to learn, i.e. the ability to infer correctly future events based on past experiences, is only one emergent phenomenon in a set of phenomena to which I am referring to as ‘‘the mind’’. To decipher how the mind works, I argue that we have to treat it as a set of emergent algorithms. The ability to learn, deduce, imagine, memorise, all these processes are emergent algorithms that are part of the mind. Notice though, I am not claiming that we can understand all emergent-phenomena of the brain by looking at individual neurones. Knowing a single neurone inside out, doesn’t tell us much about how a group of neurones interact with one-another. A reductionist mindset will not bring us far when trying to decipher the mind. By treating the brain on the other hand as a complex system with several emergent properties, we can start to guess how different parts interconnect with one-another to form the mind.&lt;/p&gt;
+&lt;p&gt;Always remember: In biology, form follows function. If there is a specific pattern in nature, that repeats over and over again in different species, we can be very confident that the repeating pattern has an important role. By looking at the optimised morphology, structures, and processes of different neurons, we can start to guess their purpose in the context of the mind. Notice how I am not saying ‘‘in the context of learning’’, but ‘‘in the context of the mind’’. The ability to learn, i.e. the ability to infer correctly future events based on past experiences, is only one emergent phenomenon in a set of phenomena to which I am referring to as ‘‘the mind’’. To decipher how the mind works, I argue that we have to treat it as a set of emergent algorithms. The ability to learn, deduce, imagine, memorise, all these processes are emergent algorithms that are part of the mind. I am not claiming though that we can understand all emergent-phenomena of the brain by looking at individual neurons. Knowing a single neuron inside out, doesn’t tell us much about how a group of neurons interact with one-another. A reductionist mindset will not bring us far when trying to decipher the mind. By treating the brain on the other hand as a complex system with several emergent properties, we can start to guess how different parts interconnect with one-another to form the mind.&lt;/p&gt;
 
-&lt;p&gt;In this book, I am particularly interested to examine the algorithm that gives rise to memory. When I say ‘‘memory’’, I do not only mean the ability to recall past events. What I mean by it, is the ability to store external, or behavioural information in neurones and neural circuits. Neuroscientists often use different terms for memory, such as explicit memory, or implicit memory, depending on the kind of memory we are talking about. In this book any information that gets stored in neurones, or neural circuits, will simply be referred to as ‘‘memory’’. It is truly mind blowing when you think about it - somehow this mesh of neurones located in our skull, is able to rapidly store external information and also retrieve it shockingly fast and accurately. To this day, we have no idea how the brain does it, but we are getting closer! We know for example that a memory tends to be associated with specific activation of neurones. Each of our experiences and behaviours somehow gets associated with a neural pattern.&lt;/p&gt;
+&lt;p&gt;In this book, I am particularly interested to examine the algorithm that gives rise to memory. When I say ‘‘memory’’, I do not only mean the ability to recall past events. What I mean by it, is the ability to store external, or behavioural information in neurons and neural circuits. Neuroscientists often use different terms for memory, such as explicit memory, or implicit memory, depending on the kind of memory we are talking about. In this book any information that gets stored in neurons, or neural circuits, will simply be referred to as ‘‘memory’’. It is truly mind blowing when you think about it - somehow this mesh of neurons located in our skull, is able to rapidly store external information and also retrieve it shockingly fast and accurately. To this day, we have no idea how the brain does it, but we are getting closer! We know for example that a memory tends to be associated with specific activation of neurons. Each of our experiences and behaviours somehow gets associated with a neural pattern.&lt;/p&gt;
 
-&lt;p&gt;When you smell a flower for example, a specific pattern of neurones in your brain will fire together, giving you that specific sensation. Once that pattern appears, a cascade of other patterns can emerge. The odour of the flower might trigger a specific memory. You might remember a field of flowers that you once visited as a child. An emotion might emerge in the cascade of patterns, causing you to feel nostalgia. All this because of a single neural pattern that was caused by the odour of a flower. How was that pattern formed? The question is not only about the physical substrate of memory (which we will examine in much detail), but about the coordination of read and write operations as well. How does the brain know how to form patterns, and how does the brain know which patterns to activate in which scenarios, and at which time? Unlike computers, the real brain  is highly asynchronous.&lt;/p&gt;
+&lt;p&gt;When you smell a flower for example, a specific pattern of neurons in your brain will fire together, giving you that specific sensation. Once that pattern appears, a cascade of other patterns can emerge. The odour of the flower might trigger a specific memory. You might remember a field of flowers that you once visited as a child. An emotion might emerge in the cascade of patterns, causing you to feel nostalgia. All this because of a single neural pattern that was caused by the odour of a flower. How was that pattern formed? The question is not only about the physical substrate of memory (which we will examine in much detail), but about the coordination of read and write operations as well. How does the brain know how to form patterns, and how does the brain know which patterns to activate in which scenarios, and at which time? Unlike computers, the real brain  is highly asynchronous.&lt;/p&gt;
 
-&lt;p&gt;'’Asynchrony’’ is when events in a system do not occur in a sequential order, but rather during overlapping time periods. We say that something runs ‘‘concurrently’’ when events, or computations can advance without waiting for all other events, or computations to complete. In the case of the brain, the bursts of firing neurones represents the concurrent events. How can brain activities converge into specific neural patterns, when the whole system runs concurrently? If a neurone fires just a bit too early, or a bit too late than the other neurones, the desired pattern might not emerge, which could for example lead to an execution failure of an action down the line. As an example, you might see a ball flying at your direction, fail to process the right action due to a bad timing between neurones in your brain, and get hit by it in the face. The fact that such scenarios do not happen all the time, makes this all the more intriguing. The problem of asynchronous communication in neural circuits is especially tricky, because none of the neurones ‘‘know’’ when the other neurones will fire, but somehow they still manage to coordinate and act as one. Any computer scientists can tell you how difficult it is to build a working, robust asynchronous system. It is in fact a nightmare. And yet here we are, each one of us carrying with us the most complex asynchronous machine in the known universe.&lt;/p&gt;
+&lt;p&gt;'’Asynchrony’’ is when events in a system do not occur in a sequential order, but rather during overlapping time periods. We say that something runs ‘‘concurrently’’ when events, or computations can advance without waiting for all other events, or computations to complete. In the case of the brain, the bursts of firing neurons represents the concurrent events. How can brain activities converge into specific neural patterns, when the whole system runs concurrently? If a neuron fires just a bit too early, or a bit too late than the other neurons, the desired pattern might not emerge, which could for example lead to an execution failure of an action down the line. As an example, you might see a ball flying at your direction, fail to process the right action due to a bad timing between neurons in your brain, and get hit by it in the face. The fact that such scenarios do not happen all the time, makes this all the more intriguing. The problem of asynchronous communication in neural circuits is especially tricky, because none of the neurons ‘‘know’’ when the other neurons will fire, but somehow they still manage to coordinate and act as one. Any computer scientists can tell you how difficult it is to build a working, robust asynchronous system. It is in fact a nightmare. And yet here we are, each one of us carrying with us the most complex asynchronous machine in the known universe.&lt;/p&gt;
 
-&lt;p&gt;The problem of neural coordination can be categorised as a Byzantine Generals Problem. The Byzantine Generals Problem was first named by Lamport, Shostak, and Pease in a wonderful paper in 1982, which not surprisingly was titled ‘‘&lt;a href=&quot;&quot;&gt;The Byzantine Generals Problem&lt;/a&gt;’’. The abstract idea of it is simple: Imagine that you are a general in the byzantine army and are planning to attack an enemy fortress. The fortress is completely surrounded by several of your battalions, each controlled by a different general. If you all manage to attack the fortress at the same time, you will succeed in taking it down. An uncoordinated attack on the other hand, will end in defeat. How do you make sure that all battalions will attack at the same moment? Even though the Byzantine Generals Problem was originally conceived and formalised as a condition in distributed computing systems, we can see how neural circuits share a very similar problem. Neurones are more likely to fire when they receive their inputs simultaneously. It seems like right timing is a necessary component for proper pattern formation and activation. As we will see later in the next chapter, the temporal aspect of the neural coordination problem will play a key role in memory formation.&lt;/p&gt;
+&lt;p&gt;The problem of neural coordination can be categorised as a Byzantine Generals Problem. The Byzantine Generals Problem was first named by Lamport, Shostak, and Pease in a wonderful paper in 1982, which not surprisingly was titled ‘‘&lt;a href=&quot;&quot;&gt;The Byzantine Generals Problem&lt;/a&gt;’’. The abstract idea of it is simple: Imagine that you are a general in the byzantine army and are planning to attack an enemy fortress. The fortress is completely surrounded by several of your battalions, each controlled by a different general. If you all manage to attack the fortress at the same time, you will succeed in taking it down. An uncoordinated attack on the other hand, will end in defeat. How do you make sure that all battalions will attack at the same moment? Even though the Byzantine Generals Problem was originally conceived and formalised as a condition in distributed computing systems, we can see how neural circuits share a very similar problem. neurons are more likely to fire when they receive their inputs simultaneously. It seems like right timing is a necessary component for proper pattern formation and activation. As we will see later in the next chapter, the temporal aspect of the neural coordination problem will play a key role in memory formation.&lt;/p&gt;
 
 &lt;p&gt;Besides emerging from completely asynchronous processes, memory has also another very interesting property - It is ‘‘re-programmable’’. Different organisms will have different memories, depending on their experiences. You were not born knowing what an apple is, but once you look at an apple, once you taste one, you will store a mental representation of the apple in your brain. Even more fascinating, next time you see an apple, you will know what it is, even though the apple you had the first time looked slightly different from the new one. The ability to figure out what something is, based on past experiences is also known as inductive reasoning, and it proved to be a very useful tool in the evolution of animals.&lt;/p&gt;
 
@@ -43,17 +157,17 @@
 
 &lt;p&gt;The first multicellular mobile organisms thus needed some kind of hardware module, not only with imprinted procedures but with re-programmable memory as well. Mobile organisms needed a way to store new experiences and behaviors on the go. A key word here is ‘‘mobile’’. A lot of scientists in fact believe that movement is why organisms evolved brains in the first place. In the race for survival, mobile organisms had to evolve the ability for ever more adaptive and complex movements and survival strategies. This became only possible once re-programmable memory evolved. As in previous biological systems, the hardware and algorithms of these organisms were pre-determined by their DNA. The ‘‘software’’ (or the memory) on the other hand was able to change dynamically within an organism’s lifetime. This was a game changer.  Suddenly the complexity of the behaviours an organism could perform was not bound by the slow, genetic instructions that they carried around with them. Organisms were for the first time able to perform quick adjustments to their own software.&lt;/p&gt;
 
-&lt;p&gt;We are only now starting to understand how the mechanisms for such ‘‘re-programmable memory’’ work. This might sound a bit far-fetched, but we are in fact in a very similar position to where Gregor Mendel, the father of modern genetics, was almost two centuries ago. Mendel was the first person to notice predictable patterns in the inheritance of traits. After thousands of experiments, back in 1865, Mendel proposed a hypothetical unit for inheriting traits. He called these heredity units ‘‘factor’’. Back then, people knew that different traits were inheritable, but very few people however bothered to ask \textit{how} traits were inherited. It is important to remember that back then, Mendel had absolutely no idea what genes were, what their physical substrate was, or how they worked. These hereditary units were purely hypothetical, but they could explain very well his experimental observations.&lt;/p&gt;
+&lt;p&gt;We are only now starting to understand how the mechanisms for such ‘‘re-programmable memory’’ work. This might sound a bit far-fetched, but we are in fact in a very similar position to where Gregor Mendel, the father of modern genetics, was almost two centuries ago. Mendel was the first person to notice predictable patterns in the inheritance of traits. After thousands of experiments, back in 1865, Mendel proposed a hypothetical unit for inheriting traits. He called these heredity units ‘‘factor’’. Back then, people knew that different traits were inheritable, but very few people however bothered to ask &lt;em&gt;how&lt;/em&gt; traits were inherited. It is important to remember that back then, Mendel had absolutely no idea what genes were, what their physical substrate was, or how they worked. These hereditary units were purely hypothetical, but they could explain very well his experimental observations.&lt;/p&gt;
 
-&lt;p&gt;Today, a lot of scientists believe in another such hypothetical unit, a unit not for traits, but for memories. We refer to those hypothetical units as \textit{Engrams}, or memory-traces. Mendel’s hypothetical unit served as a storage medium for inheritance, while the hypothetical Engrams serve as a storage medium for cognitive information. Its exact mechanisms and the locations of the Engrams however remain enigmatic. We do know some things at least. Remember how different experiences, such as odours, could activate different patterns of neurones in the brain. We know that assemblies of neurones in our brain are somehow associated with specific experiences. Whenever an experience occurs, the neurones of the associated pattern fire together. Donald Hebb, a famous neuropsychologist, noticed this strange phenomenon, and proposed a marvellous theory in his 1949 book ‘‘&lt;a href=&quot;https://link.springer.com/chapter/10.1007/978-3-642-70911-1_15&quot;&gt;The Organization of Behaviour&lt;/a&gt;’’. Today Hebb’s proposal is known as Hebbian Theory, or Hebb’s rule and it explains how assemblies of neurones can become Engrams. Hebb stated that:&lt;/p&gt;
+&lt;p&gt;Today, a lot of scientists believe in another such hypothetical unit, a unit not for traits, but for memories. We refer to those hypothetical units as &lt;em&gt;Engrams&lt;/em&gt;, or memory-traces. Mendel’s hypothetical unit served as a storage medium for inheritance, while the hypothetical Engrams serve as a storage medium for cognitive information. Its exact mechanisms and the locations of the Engrams however remain enigmatic. We do know some things at least. Remember how different experiences, such as odours, could activate different patterns of neurons in the brain. We know that assemblies of neurons in our brain are somehow associated with specific experiences. Whenever an experience occurs, the neurons of the associated pattern fire together. Donald Hebb, a famous neuropsychologist, noticed this strange phenomenon, and proposed a marvellous theory in his 1949 book ‘‘&lt;a href=&quot;https://link.springer.com/chapter/10.1007/978-3-642-70911-1_15&quot;&gt;The Organization of Behaviour&lt;/a&gt;’’. Today Hebb’s proposal is known as Hebbian Theory, or Hebb’s rule and it explains how assemblies of neurons can become Engrams. Hebb stated that:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;'’Any two cells or systems of cells that are repeatedly active at the same time will tend to become ‘associated’ so that activity in one facilitates activity in the other.’’&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;In laymen terms, Hebb’s rule states that ‘‘neurones that fire together, wire together’’. That over simplified statement is indeed what we observe. There is now overwhelming evidence that ensembles of neurones play an important role in memory storage. A fascinating &lt;a href=&quot;https://www.cell.com/cell/fulltext/S0092-86741930616-6?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419306166%3Fshowall%3Dtrue&quot;&gt;experiment&lt;/a&gt; in 2019 for example, showed how by artificially activating behaviourally relevant ensembles of neurones, one could observe consistent behavioural responses from test animals. In other words, whenever the specific behavioural pattern was artificially activated, the mice performed the behaviour that was associated with the pattern. To achieve the forced pattern activation, the researchers genetically engineered the mice to have neurones covered with special proteins, that when hit by a light-beam cause the neurone to fire. This ingenious technique is also known as optogenetics. What was even more fascinating however, was that some ensembles of neurones had pattern completion properties. By simply artificially activating two of the ensemble neurones, the researchers were able to trigger the entire ensemble to activate. The results of the experiment beautifully coincide with Hebb’s rule.&lt;/p&gt;
+&lt;p&gt;In laymen terms, Hebb’s rule states that ‘‘neurons that fire together, wire together’’. That over simplified statement is indeed what we observe. There is now overwhelming evidence that ensembles of neurons play an important role in memory storage. A fascinating &lt;a href=&quot;https://www.cell.com/cell/fulltext/S0092-86741930616-6?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419306166%3Fshowall%3Dtrue&quot;&gt;experiment&lt;/a&gt; in 2019 for example, showed how by artificially activating behaviourally relevant ensembles of neurons, one could observe consistent behavioural responses from test animals. In other words, whenever the specific behavioural pattern was artificially activated, the mice performed the behaviour that was associated with the pattern. To achieve the forced pattern activation, the researchers genetically engineered the mice to have neurons covered with special proteins, that when hit by a light-beam cause the neuron to fire. This ingenious technique is also known as optogenetics. What was even more fascinating however, was that some ensembles of neurons had pattern completion properties. By simply artificially activating two of the ensemble neurons, the researchers were able to trigger the entire ensemble to activate. The results of the experiment beautifully coincide with Hebb’s rule.&lt;/p&gt;
 
-&lt;p&gt;Hebb’s statement however, that “Any two cells that are repeatedly active at the same time will tend to become ‘associated’ so that activity in one facilitates activity in the other”, is an observation, not a mechanism. Why do two neurones become active at the same time in the first place? What exactly is happening at a cellular level when neurones fire? And how can out of many neurones emerge a pattern? I will cover that, and much more, in the next chapter.&lt;/p&gt;
+&lt;p&gt;Hebb’s statement however, that “Any two cells that are repeatedly active at the same time will tend to become ‘associated’ so that activity in one facilitates activity in the other”, is an observation, not a mechanism. Why do two neurons become active at the same time in the first place? What exactly is happening at a cellular level when neurons fire? And how can out of many neurons emerge a pattern? I will cover that, and much more, in the next chapter.&lt;/p&gt;
 </description>
         <pubDate>Mon, 04 May 2020 00:00:00 +0200</pubDate>
         <link>http://localhost:4000/E-Pluribus-Unum</link>
@@ -63,7 +177,7 @@
         
         <category>Neuroscience</category>
         
-        <category>Neurones</category>
+        <category>neurons</category>
         
         <category>Memory</category>
         
@@ -89,7 +203,7 @@
         
         <category>Neuroscience</category>
         
-        <category>Neurones</category>
+        <category>neurons</category>
         
         <category>Memory</category>
         
@@ -111,15 +225,15 @@
 &lt;p&gt;This ancient story was told to teach a simple lesson that is often ignored: The behaviour of a system cannot be known just by knowing the elements of which the system is made.&lt;/p&gt;
 
 &lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;We have come a long way since  Santiago Ramón y Cajal published his first iconic drawings of neurones back in the late 19th century. The sheer amount of discoveries made by scientists since then proves that we are gradually converging on an understanding of how the brain works. The ingenious techniques that neuroscientists are developing to record and analyse our brains, are now helping us illuminate one by one parts of a once unknown world. Whereas the neuronal morphology and the molecular mechanisms of different neural structures are relatively well understood, the bigger picture of how neuronal interactions form emergent phenomena remains enigmatic. More than a century after the neurone’s discovery, we still do not know how the neural circuity in our heads gives rise to the mind. Like the blind men beyond Ghor, we are still trying to make sense of the elephant ourselves.&lt;/p&gt;
+&lt;p&gt;We have come a long way since  Santiago Ramón y Cajal published his first iconic drawings of neurons back in the late 19th century. The sheer amount of discoveries made by scientists since then proves that we are gradually converging on an understanding of how the brain works. The ingenious techniques that neuroscientists are developing to record and analyse our brains, are now helping us illuminate one by one parts of a once unknown world. Whereas the neuronal morphology and the molecular mechanisms of different neural structures are relatively well understood, the bigger picture of how neuronal interactions form emergent phenomena remains enigmatic. More than a century after the neuron’s discovery, we still do not know how the neural circuity in our heads gives rise to the mind. Like the blind men beyond Ghor, we are still trying to make sense of the elephant ourselves.&lt;/p&gt;
 
 &lt;p&gt;Humans in fact tried to understand the nature of the mind for centuries. For example, ancient Indian philosophers believed in the theory of Samskara. Samskara meant different things to different people, and it was always somehow mixed with religion. It represented the mental impressions, or psychological imprints of a person. Samskaras were explained as characteristics, or behavioural traits that one either possessed from the moment of birth, or that got shaped over time. Indian philosophers  of the Nyaya school of Hinduism understood that a newborn child has imprinted memories (even though they did not refer to it like that). They argued that a baby’s instinctive reach for the mother’s breast was a sign that the baby had some prior Samskara. Since no one provided the knowledge of the necessity of the mother’s breast to the baby, and since the baby did not form any samskaras so far, philosophers believed that the newborn’s knowledge came from a ‘‘prior experience’’.&lt;/p&gt;
 
 &lt;p&gt;As always, it was the Ancient Greeks however that hit the nail on its head. Alcmaeon of Croton, one of the greatest minds of Ancient Greece, was the first one to propose that the brain is the organ of the mind. Even though this revelation might not sound like a big deal, it was a revolution in human knowledge. Up until then, it was not that obvious to people that the thinking happens in the brain. The brain was just another organ. Even the father of modern science, Democritus of Abdera, who formulated the atomic theory of the universe, was inspired by Alcmaeon’s discovery. Democritus concurred with Alcmaeon’s discovery and argued that perception is a purely mechanistic (or one might say algorithmic) process. He argued that thinking and feeling were just attributes of matter that emerge when organised in a sufficiently fine and complex way and not due to some spirit infused into matter by the gods. During the time of Democritus, where everything was fused with spirituality and mysticism, these were not only bold statements, they were world-shattering. We know that Democritus wrote several books about the mind and senses. Some of the known book titles were “On the Mind”, “On the Senses”, “On Flavours”, “On Colours”, and “On Logic”. None of Alcmaeon’s and Democritus’ books however survived, all we know are the titles and the references from other philosophers. Who knows where we would have been today, if only we would have managed to preserve the memory of these ancient giants.&lt;/p&gt;
 
-&lt;p&gt;The Ancient Greeks answered the question of ‘‘where’’ the mind takes place. Today’s scientists on the other hand are trying to answer ‘‘how’’ the mind does what it does. How do we learn? Where and how are memories stored? How does consciousness form? These are quite abstract questions, which because of the way they are asked, are difficult to answer. I strongly believe that to answer these questions, we will have to question every neurobiological structure and biochemical process we see. Why is there a very long dendrite that emerges from the cell body of pyramidal cells? Why are so many excitatory neurones covered with dendritic spines? Why are most interneurons spineless? What’s the purpose of the back-propagating signal found inside neurones? Why do excitatory and inhibitory neurones look so different? What is the purpose of the enigmatic spine apparatus and why do axons also have such a similar organelle?&lt;/p&gt;
+&lt;p&gt;The Ancient Greeks answered the question of ‘‘where’’ the mind takes place. Today’s scientists on the other hand are trying to answer ‘‘how’’ the mind does what it does. How do we learn? Where and how are memories stored? How does consciousness form? These are quite abstract questions, which because of the way they are asked, are difficult to answer. I strongly believe that to answer these questions, we will have to question every neurobiological structure and biochemical process we see. Why is there a very long dendrite that emerges from the cell body of pyramidal cells? Why are so many excitatory neurons covered with dendritic spines? Why are most interneurons spineless? What’s the purpose of the back-propagating signal found inside neurons? Why do excitatory and inhibitory neurons look so different? What is the purpose of the enigmatic spine apparatus and why do axons also have such a similar organelle?&lt;/p&gt;
 
-&lt;p&gt;I believe that these are the kind of questions that will allow us to reverse engineer the circuits that give rise to the algorithms of our minds. Patterns that repeat over and over again in nature tend to have an important role. In biology after all, form follows function. Instead of focusing on big philosophical questions, I argue that we can deduce and understand the algorithmic parts of the brain by questioning the patterns in the morphology and biochemical processes of neurones. As you can quickly notice, one needs to know some basic neurobiology, to understand the questions this book tries to answer. That’s why we are going to learn some basic neuroscience in later chapters. I hope that none of the readers get too boarded by the theory.&lt;/p&gt;
+&lt;p&gt;I believe that these are the kind of questions that will allow us to reverse engineer the circuits that give rise to the algorithms of our minds. Patterns that repeat over and over again in nature tend to have an important role. In biology after all, form follows function. Instead of focusing on big philosophical questions, I argue that we can deduce and understand the algorithmic parts of the brain by questioning the patterns in the morphology and biochemical processes of neurons. As you can quickly notice, one needs to know some basic neurobiology, to understand the questions this book tries to answer. That’s why we are going to learn some basic neuroscience in later chapters. I hope that none of the readers get too boarded by the theory.&lt;/p&gt;
 
 &lt;p&gt;Writing this book is turning out to be tricky. On the one hand, the book has to be technical enough so that scientists do not get annoyed, yet it has to be simple and clear enough, so that people from different backgrounds can nonetheless understand everything. Because of this, I decided that any term or concept used after the introduction, be it neuroscience related or machine learning related, has to be explained in advance. My interest is after all to reach as many people as possible.&lt;/p&gt;
 
@@ -137,7 +251,7 @@
         
         <category>Neuroscience</category>
         
-        <category>Neurones</category>
+        <category>neurons</category>
         
         <category>Memory</category>
         

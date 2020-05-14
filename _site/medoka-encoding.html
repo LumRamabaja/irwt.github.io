@@ -8,22 +8,22 @@
 
     
         <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation | Lum Ramabaja</title>
+<title>Using Medoka encoding to compress sparse bitmaps | Lum Ramabaja</title>
 <meta name="generator" content="Jekyll v3.8.5" />
-<meta property="og:title" content="The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation" />
+<meta property="og:title" content="Using Medoka encoding to compress sparse bitmaps" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Contents Part One The Blind Men Beyond Ghor E Pluribus Unum The Neuron …" />
-<meta property="og:description" content="Contents Part One The Blind Men Beyond Ghor E Pluribus Unum The Neuron …" />
-<link rel="canonical" href="http://localhost:4000/The-Competitive-Neuron" />
-<meta property="og:url" content="http://localhost:4000/The-Competitive-Neuron" />
+<meta name="description" content="In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the LZ family of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim)." />
+<meta property="og:description" content="In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the LZ family of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim)." />
+<link rel="canonical" href="http://localhost:4000/medoka-encoding" />
+<meta property="og:url" content="http://localhost:4000/medoka-encoding" />
 <meta property="og:site_name" content="Lum Ramabaja" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-05-03T00:00:00+02:00" />
+<meta property="article:published_time" content="2020-05-14T00:00:00+02:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation" />
+<meta property="twitter:title" content="Using Medoka encoding to compress sparse bitmaps" />
 <meta name="twitter:site" content="@" />
 <script type="application/ld+json">
-{"url":"http://localhost:4000/The-Competitive-Neuron","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/The-Competitive-Neuron"},"headline":"The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation","dateModified":"2020-05-03T00:00:00+02:00","datePublished":"2020-05-03T00:00:00+02:00","description":"Contents Part One The Blind Men Beyond Ghor E Pluribus Unum The Neuron …","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"url":"http://localhost:4000/medoka-encoding","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/medoka-encoding"},"headline":"Using Medoka encoding to compress sparse bitmaps","dateModified":"2020-05-14T00:00:00+02:00","datePublished":"2020-05-14T00:00:00+02:00","description":"In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the LZ family of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim).","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     
@@ -140,21 +140,19 @@ License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL
 
         <header class="post-header">
             <div class="post-meta">
-                <time class="post-date" datetime="2020-05-03">
-                    May 3, 2020
+                <time class="post-date" datetime="2020-05-14">
+                    May 14, 2020
                 </time>
             </div><!-- .post-meta -->
-            <h1 class="post-title">The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation</h1>
+            <h1 class="post-title">Using Medoka encoding to compress sparse bitmaps</h1>
             
             <p class="post-tags">
-                <a href="/tags/index.html#Book"
-                    rel="tag">Book</a>
-                <a href="/tags/index.html#Neuroscience"
-                    rel="tag">Neuroscience</a>
-                <a href="/tags/index.html#neurons"
-                    rel="tag">neurons</a>
-                <a href="/tags/index.html#Memory"
-                    rel="tag">Memory</a>
+                <a href="/tags/index.html#article"
+                    rel="tag">article</a>
+                <a href="/tags/index.html#compression"
+                    rel="tag">compression</a>
+                <a href="/tags/index.html#bitmap"
+                    rel="tag">bitmap</a>
                 
             </p>
             
@@ -162,27 +160,117 @@ License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL
 
         
         <div class="post-thumbnail">
-            <img src="assets/images/posts/2020/cajal1.jpg" alt="The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation">
+            <img src="assets/images/posts/2020/e_l_The_walls_of_Durrës.jpg" alt="Using Medoka encoding to compress sparse bitmaps">
         </div>
         
         <div class="post-content">
-            <h1 id="contents">Contents</h1>
-<h2 id="part-one">Part One</h2>
+            <p>In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the <a href="https://en.wikipedia.org/wiki/LZ77_and_LZ78">LZ family</a> of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim).</p>
+
+<p>Before explaining how the encoding scheme works, let’s look at some simple use cases for bitmap compression:</p>
 <ul>
-  <li><a href="https://lums.blog/the-blind-men-beyond-ghor">The Blind Men Beyond Ghor</a></li>
-  <li><a href="https://lums.blog/e-pluribus-unum">E Pluribus Unum</a></li>
-  <li>The Neuron</li>
-  <li>…</li>
+  <li><a href="https://en.wikipedia.org/wiki/Bitmap_index#Compression">Bitmap index</a> compression. Bitmap indices are just bit arrays used in databases to answer queries by performing bitwise logical operations. In some cases however, our data columns can be quite sparse. In other words our bitmap would have a lot of zeros, and just a few ones. When dealing with such cases, we usually try to compress the bitmap, so as to not waste unnecessarily space.</li>
+  <li><a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filters</a>. Bloom filters are probabilistic data structures used to test whether an element is a member of a set. They are probabilistic, because false positives can occur while checking for the presence of elements. Bloom filters are also just bit arrays. The ratio of ones and zeros in the bloom filter depends on the chosen parameters of the bloom filter, as well as on the number of elements inserted to the bloom filter. If the difference between zeros and ones is large, it’s better to compress the bloom filter, before sending it to another node.</li>
 </ul>
+
+<p>It’s important to note that in both mentioned cases, if we were to use a compression technique such as LZ77, we would have first to decode the data, before being able to query it. Medoka encoding does not have this problem, one  can directly participate in bitwise operations without decompressing the data.</p>
+
+<p>Now let’s look at how Medoka encoding works, by following simple Python code:</p>
+
+<p>First let’s create a random sparse list with ones and zeros:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import numpy as np
+a = (np.random.rand(100) &lt; 0.1).astype(int).tolist()
+print(a)
+</code></pre></div></div>
+
+<p>The output will look something like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+</code></pre></div></div>
+
+<p>To perform Medoka encoding, we first need to transform the bit array. For the sake of it, let’s call the transformation “sum_transform”:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def sum_transform(a):
+  mapp = {1:1, 0:-1}
+  s = []
+  n = 1
+  prev = a[0]
+  for i in a[1:]:
+      if i == prev:
+          n += 1
+      else:
+          s.append(n * mapp[prev])
+          n = 1
+          prev = i
+  s.append(n * mapp[prev])
+  return s
+
+b = sum_transform(a)
+print(b)
+</code></pre></div></div>
+
+<p>The output:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[-7, 2, -3, 1, -3, 1, -19, 1, -7, 2, -2, 1, -18, 1, -20, 1, -11]
+</code></pre></div></div>
+
+<p>As we can see, “sum_transform” takes as input the bit list. To better understand what we’re actually doing at this step, look at both the bit list output, as well as the sum_transform output. The function sums up all the zeros that are next to each other and assigns a negative sign to that integer. It does the same thing to the ones, and assigns a positive sign to the integer.</p>
+
+<p>Now comes the final step of the Medoka encoding algorithm:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def medoka_encoding(a, symbol):
+    b = [a[0]]
+    for elm in a[1:-1]:
+        if elm != symbol:
+            b.append(elm)
+    b.append(a[-1])
+    return b
+
+c = medoka_encoding(b, 1)
+print(c)
+</code></pre></div></div>
+
+<p>The output:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[-7, 2, -3, -3, -19, -7, 2, -2, -18, -20, -11]
+</code></pre></div></div>
+
+<p>For the final step of the Medoka encoding algorithm, we simply specify the most frequent symbol from out “sum_transform step”, which was the number one. We then remove all ones from sum_transform list. What we get at the end is our final array, that is much more compressable now. We can then compress the array either by using <a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a>, <a href="https://en.wikipedia.org/wiki/Exponential-Golomb_coding">Exponential-Golomb coding</a>, or any other universal code.</p>
+
+<p>Of course it wouldn’t be much of an encoding algorithm if all the steps weren’t reversible! To get back to the initial bit array, we simply iterate over the Medoka encoded array. In our case, if two negative numbers occur one after another, we know that we have to insert the number one there. In other words, the sign periodicity of the “sum_transform” step, allows us to infer where a symbol was deleted.</p>
+
+<p>The code for decoding:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def medoka_decoding(a,symbol):
+  b = []
+  for i in range(len(a)-1):
+      b.append(a[i])
+      if np.sign(a[i]) == np.sign(a[i+1]):
+          b.append(symbol)
+  b.append(a[-1])
+  return b
+
+d = medoka_decoding(c, 1)
+print(d)
+</code></pre></div></div>
+
+<p>Output:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[-7, 2, -3, 1, -3, 1, -19, 1, -7, 2, -2, 1, -18, 1, -20, 1, -11]
+</code></pre></div></div>
+
+<p>From here we can easily recreate our initial bit array.</p>
+
+<p>In this simple example, I used only a single symbol for the deletion step of the Medoka encoding scheme. We can technically use however two symbols, one symbol with a positive sign, and another with a negative sign. If two negative numbers repeat, we insert the positive symbol during the decoding step. If two positive numbers repeat, we insert the negative symbol during the decoding step. Notice however that if both symbols occur next to each other, only one of them can get deleted, otherwise the computational steps become irreversible.</p>
 
         </div>
         <footer class="post-footer">
             <div class="post-share">
                 <span class="post-share-title">Share:</span>
                 <a target="_blank"
-                    href="https://twitter.com/share?text=The+Competitive+Neuron+-+On+the+Formation+of+Memories+and+Neuronal+Specialisation&amp;url=https://royce.netlify.com/The-Competitive-Neuron">Twitter</a>
+                    href="https://twitter.com/share?text=Using+Medoka+encoding+to+compress+sparse+bitmaps&amp;url=https://royce.netlify.com/medoka-encoding">Twitter</a>
                 <a target="_blank"
-                    href="https://www.facebook.com/sharer/sharer.php?u=https://royce.netlify.com/The-Competitive-Neuron">Facebook</a>
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://royce.netlify.com/medoka-encoding">Facebook</a>
             </div><!-- .share-post -->
         </footer>
         
@@ -217,9 +305,9 @@ License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL
         <article class="post">
             <header class="post-header">
                 <div class="post-meta">
-                    <time class="published" datetime="May 3, 2020">May 3, 2020</time>
+                    <time class="published" datetime="May 4, 2020">May 4, 2020</time>
                 </div>
-                <h3 class="post-title"><a href="/The-Blind-Men-Beyond-Ghor">The Blind Men Beyond Ghor</a>
+                <h3 class="post-title"><a href="/E-Pluribus-Unum">E Pluribus Unum</a>
                 </h3>
                 <p class="post-tags">
                     
@@ -245,36 +333,6 @@ License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL
             </header>
         </article>
         
-        
-        <article class="post">
-            <header class="post-header">
-                <div class="post-meta">
-                    <time class="published" datetime="May 4, 2020">May 4, 2020</time>
-                </div>
-                <h3 class="post-title"><a href="/E-Pluribus-Unum">E Pluribus Unum</a></h3>
-                <p class="post-tags">
-                    
-                    
-                    
-                    <a href='/tag/book/'>Book</a>
-                    
-                    
-                    
-                    <a href='/tag/neuroscience/'>Neuroscience</a>
-                    
-                    
-                    
-                    <a href='/tag/neurons/'>Neurons</a>
-                    
-                    
-                    
-                    <a href='/tag/memory/'>Memory</a>
-                    
-                    
-                    
-                </p>
-            </header>
-        </article>
         
     </section><!-- .read-next -->
 

@@ -1,9 +1,17 @@
 [
   
     {
+      "title"    : "Using Medoka encoding to compress sparse bitmaps",
+      "category" : "",
+      "tags"     : "article, compression, bitmap",
+      "url"      : "/medoka-encoding",
+      "date"     : "May 14, 2020"
+    } ,
+  
+    {
       "title"    : "E Pluribus Unum",
       "category" : "",
-      "tags"     : "Book, Neuroscience, Neurones, Memory",
+      "tags"     : "Book, Neuroscience, neurons, Memory",
       "url"      : "/E-Pluribus-Unum",
       "date"     : "May 4, 2020"
     } ,
@@ -11,7 +19,7 @@
     {
       "title"    : "The Competitive Neuron - On the Formation of Memories and Neuronal Specialisation",
       "category" : "",
-      "tags"     : "Book, Neuroscience, Neurones, Memory",
+      "tags"     : "Book, Neuroscience, neurons, Memory",
       "url"      : "/The-Competitive-Neuron",
       "date"     : "May 3, 2020"
     } ,
@@ -19,7 +27,7 @@
     {
       "title"    : "The Blind Men Beyond Ghor",
       "category" : "",
-      "tags"     : "Book, Neuroscience, Neurones, Memory",
+      "tags"     : "Book, Neuroscience, neurons, Memory",
       "url"      : "/The-Blind-Men-Beyond-Ghor",
       "date"     : "May 3, 2020"
     } ,
