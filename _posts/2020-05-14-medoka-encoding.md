@@ -8,7 +8,7 @@ featured: true
 hidden: true
 ---
 
-In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the [LZ family](https://en.wikipedia.org/wiki/LZ77_and_LZ78) of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done to support that claim).
+In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the [LZ family](https://en.wikipedia.org/wiki/LZ77_and_LZ78) of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done for that claim).
 
 Before explaining how the encoding scheme works, let's look at some simple use cases for bitmap compression:
 * [Bitmap index](https://en.wikipedia.org/wiki/Bitmap_index#Compression) compression. Bitmap indices are just bit arrays used in databases to answer queries by performing bitwise logical operations. In some cases however, our data columns can be quite sparse. In other words our bitmap would have a lot of zeros, and just a few ones. When dealing with such cases, we usually try to compress the bitmap, so as to not waste unnecessarily space.
