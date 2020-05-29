@@ -1,6 +1,8 @@
 # Site setings
 name: 'Lum Ramabaja'
-description: 'Researcher'
+description: 'Welcome to my blog'
+title: Lum’s blog
+url: https://lums.blog
 #meta_description: 'Jekyll template, minimal style, perfect for bloggers.'
 logo:
 # Author image is used in site sidebar and greetings in the home page hero text
