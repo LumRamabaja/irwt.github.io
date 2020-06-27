@@ -9,8 +9,8 @@ hidden: true
 ---
 
 # Contents
+## [Introduction](https://lums.blog/introduction)
 ## Part One - Biology
-* [The Blind Men Beyond Ghor](https://lums.blog/the-blind-men-beyond-ghor)
 * [E Pluribus Unum](https://lums.blog/e-pluribus-unum)
 * The Ghost In The Neuron
 * ...
