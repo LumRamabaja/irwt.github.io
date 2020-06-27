@@ -5,8 +5,8 @@
     <description>Welcome to my blog</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 28 Jun 2020 00:26:53 +0200</pubDate>
-    <lastBuildDate>Sun, 28 Jun 2020 00:26:53 +0200</lastBuildDate>
+    <pubDate>Sun, 28 Jun 2020 00:41:33 +0200</pubDate>
+    <lastBuildDate>Sun, 28 Jun 2020 00:41:33 +0200</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -124,7 +124,7 @@ print(d)
       </item>
     
       <item>
-        <title>E Pluribus Unum</title>
+        <title>The Engram</title>
         <description>&lt;p&gt;This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the &lt;a href=&quot;https://lums.blog/The-Competitive-Neuron&quot;&gt;book&lt;/a&gt;.&lt;/p&gt;
 
 &lt;hr /&gt;
@@ -168,8 +168,8 @@ print(d)
 &lt;p&gt;In laymen terms, Hebb’s rule states that ‘‘neurons that fire together, wire together’’. That over simplified statement is indeed what we observe. There is now overwhelming evidence that ensembles of neurons play an important role in memory storage. A fascinating &lt;a href=&quot;https://www.cell.com/cell/fulltext/S0092-86741930616-6?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419306166%3Fshowall%3Dtrue&quot;&gt;experiment&lt;/a&gt; in 2019 for example, showed how by artificially activating behaviourally relevant ensembles of neurons, one could observe consistent behavioural responses from test animals. In other words, whenever the specific behavioural pattern was artificially activated, the mice performed the behaviour that was associated with the pattern. To achieve the forced pattern activation, the researchers genetically engineered the mice to have neurons covered with special proteins, that when hit by a light-beam cause the neuron to fire. This ingenious technique is also known as optogenetics. What was even more fascinating however, was that some ensembles of neurons had pattern completion properties. By simply artificially activating two of the ensemble neurons, the researchers were able to trigger the entire ensemble to activate. The results of the experiment beautifully coincide with Hebb’s rule. Hebb’s statement however, that “Any two cells that are repeatedly active at the same time will tend to become ‘associated’ so that activity in one facilitates activity in the other”, is an observation, not a mechanism. Why do two neurons become active at the same time in the first place? What exactly is happening at a cellular level when neurons fire? And how can out of many neurons emerge a pattern?&lt;/p&gt;
 </description>
         <pubDate>Mon, 04 May 2020 00:00:00 +0200</pubDate>
-        <link>http://localhost:4000/E-Pluribus-Unum</link>
-        <guid isPermaLink="true">http://localhost:4000/E-Pluribus-Unum</guid>
+        <link>http://localhost:4000/the-engram</link>
+        <guid isPermaLink="true">http://localhost:4000/the-engram</guid>
         
         <category>Book</category>
         
@@ -189,7 +189,7 @@ print(d)
 
 &lt;h2 id=&quot;part-one---biology&quot;&gt;Part One - Biology&lt;/h2&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://lums.blog/e-pluribus-unum&quot;&gt;E Pluribus Unum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lums.blog/the-engram&quot;&gt;The Engram&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;The Ghost In The Neuron&lt;/li&gt;
   &lt;li&gt;…&lt;/li&gt;
 &lt;/ul&gt;
@@ -240,13 +240,11 @@ print(d)
 
 &lt;p&gt;My interest is not to write a philosophical, vaguely defined proposal for how memories are formed and stored. Instead I will use a more pragmatic approach and explain a concrete, simple to understand process for it. Even though we do not know all the biochemical puzzle pieces for this problem yet, we will see how by looking at many experiments, we can already come up with a simple unsupervised learning algorithm for neural circuits. I feel it is important to emphasise that while designing the model, I tried to be as strict as possible on its biological plausibility, putting neurobiology first and machine learning second. There will be no complicated math, no unnecessary abstractions that have little to do with actual biology, nothing of that sort. This book is after all meant to help us get closer to deciphering the brain. Not that it is bad to write things in a mathematical way, on the contrary, mathematics is after all the language of the universe. But I feel that too many times, especially in academia, we tend to use mathematics to make things appear more complicated, rather than to simplify them. I will hopefully use the latter approach in this book.&lt;/p&gt;
 
-&lt;p&gt;Instead of immediately trying to answer the big questions, we are going to ask well defined biological questions, like the ones mentioned earlier. We are then going to use the proposed answers to those questions as puzzle pieces for bigger questions, like ‘‘How are memories stored?’’. Often times knowing how to ask the right questions is even more important than the question itself. We will not only examine the proposed model, but the biological structures from which it emerges as well. We will see how many of the questions in neurobiology, including the ones mentioned earlier in this introduction, can be indirectly explained and understood through this model. Even if my hypothesis turns out not to reflect reality, I hope that the facts and the questions asked in this book will help others decipher the mind.&lt;/p&gt;
+&lt;p&gt;Instead of immediately trying to answer the big questions, we are going to ask well defined biological questions, like the ones mentioned earlier. We are then going to use the proposed answers to those questions as puzzle pieces for bigger questions, like ‘‘How are memories stored?’’. Often times knowing how to ask the right questions is even more important than the question itself. We will not only examine the proposed model, but the biological structures from which it emerges as well. We will see how many of the questions in neurobiology, including the ones mentioned earlier in this introduction, can be indirectly explained and understood through this model.&lt;/p&gt;
 
-&lt;p&gt;As you have probably seen in the contents page, the first part of the book is called “Biology”, whereas the second part “Technology”. While the first part describes the neurobiological structures and the emergent phenomena of neural circuits, the second part of the book focuses on the potential real-world applications of the proposed model. In the second part of the book, I will discuss about artificial neural networks, as well as the emergent field of neuromorphic computing. I will explain how todays neural networks work, and why I believe it is so important to figure out alternatives to the backpropagation algorithm. At the end of the second part, we will explore some existing neural network architectures and I will propose a new kind of architecture based on the proposed model in the first part of the book.&lt;/p&gt;
+&lt;p&gt;As you have probably seen in the contents page, the first part of the book is called “Biology”, whereas the second part “Technology”. While the first part describes the neurobiological structures and the emergent phenomena of neural circuits, the second part of the book focuses on the potential real-world applications of the proposed model. In the second part of the book, I will discuss about artificial neural networks, as well as the emergent field of neuromorphic computing. We will see what the basic idea of machine learning is and how the concepts of machine learning can be quite a useful mental model to reverse engineer the algorithms of biological systems. I will also explain how todays neural networks work, and why I believe that it is so important to figure out alternatives to the backpropagation algorithm. At the end of the second part, we will explore some of the existing neural network architectures and I will propose a new kind of architecture based on the proposed model from the first part of the book.&lt;/p&gt;
 
-&lt;p&gt;Writing this book turned out to be tricky. On the one hand, the book has to be technical enough so that scientists do not get annoyed, yet it has to be simple and clear enough, so that people from different backgrounds can nonetheless understand everything. Because of this, I decided that any term or concept used after the introduction, be it neuroscience related or machine learning related, has to be explained in advance. My interest is after all to reach as many people as possible.&lt;/p&gt;
-
-&lt;p&gt;After the last sentences, you might think something like ‘‘Machine learning? Wait a minute, I thought this book is about memory?’’. I believe that the concepts of machine learning can be quite useful to reverse engineer the algorithms of biological systems.&lt;/p&gt;
+&lt;p&gt;Writing this book turned out to be tricky. On the one hand, the book has to be technical enough so that scientists and researchers do not get annoyed, yet it has to be simple and clear enough, so that people from different backgrounds can nonetheless understand everything. Because of this, I decided that any term or concept used after the introduction, be it neuroscience related or machine learning related, has to be explained in advance. My interest is after all to reach as many people as possible. Even if my hypothesis turns out not to reflect reality, I hope that the facts and the questions asked in this book will help others decipher the mind.&lt;/p&gt;
 </description>
         <pubDate>Sun, 03 May 2020 00:00:00 +0200</pubDate>
         <link>http://localhost:4000/Introduction</link>

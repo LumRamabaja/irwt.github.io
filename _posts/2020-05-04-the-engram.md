@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'E Pluribus Unum'
+title: 'The Engram'
 tags: [Book, Neuroscience, neurons, Memory]
 featured_image_thumbnail:
 featured_image: assets/images/posts/2020/e_l_ancient_doric_column.jpg

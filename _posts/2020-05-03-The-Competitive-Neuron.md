@@ -12,7 +12,7 @@ hidden: true
 ## [Introduction](https://lums.blog/introduction)
 
 ## Part One - Biology
-* [E Pluribus Unum](https://lums.blog/e-pluribus-unum)
+* [The Engram](https://lums.blog/the-engram)
 * The Ghost In The Neuron
 * ...
 
