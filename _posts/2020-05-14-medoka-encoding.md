@@ -4,8 +4,6 @@ title: 'Using Medoka encoding to compress sparse bitmaps'
 tags: [article, compression, bitmap]
 featured_image_thumbnail:
 featured_image: assets/images/posts/2020/e_l_The_walls_of_Durres.jpg
-featured: true
-hidden: true
 ---
 
 In this short article, I am going introduce the idea of Medoka encoding, a simple lossless compression technique which I invented a couple of years ago. In contrast to the [LZ family](https://en.wikipedia.org/wiki/LZ77_and_LZ78) of lossless compression algorithms, Medoka encoding can only be applied to bit arrays, aka bitmaps. The technique is unbelievably simple to code, it is highly parallelizable, very quick in both encoding and decoding, and it usually performed better in my experiments than LZ techniques (of course, more rigorous experiments have to be done for that claim).
