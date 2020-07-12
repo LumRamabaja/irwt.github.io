@@ -13,7 +13,7 @@ hidden: true
 
 ## Part One - Biology
 * [The Engram](https://lums.blog/the-engram)
-* The Ghost In The Neuron
+* [The Ghost In The Neuron](https://lums.blog/the-ghost-in-the-neuron)
 * ...
 
 ## Part Two - Technology
