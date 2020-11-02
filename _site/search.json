@@ -1,6 +1,14 @@
 [
   
     {
+      "title"    : "The Ghost In The Neuron",
+      "category" : "",
+      "tags"     : "Book, Neuroscience, neurons, Memory",
+      "url"      : "/the-ghost-in-the-neuron",
+      "date"     : "June 29, 2020"
+    } ,
+  
+    {
       "title"    : "Using Medoka encoding to compress sparse bitmaps",
       "category" : "",
       "tags"     : "article, compression, bitmap",
