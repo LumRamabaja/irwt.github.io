@@ -1,11 +1,11 @@
 [
   
     {
-      "title"    : "The Ghost In The Neuron",
+      "title"    : "Scaling Blockchains (Part 1) - The Interactive Bloom Proof",
       "category" : "",
-      "tags"     : "Book, Neuroscience, neurons, Memory",
-      "url"      : "/the-ghost-in-the-neuron",
-      "date"     : "June 29, 2020"
+      "tags"     : "Blockchain, Bloom Filter, SPV",
+      "url"      : "/scaling-blockchains-part1-ibp",
+      "date"     : "October 2, 2020"
     } ,
   
     {
