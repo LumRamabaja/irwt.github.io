@@ -9,14 +9,6 @@
     } ,
   
     {
-      "title"    : "Using Medoka encoding to compress sparse bitmaps",
-      "category" : "",
-      "tags"     : "article, compression, bitmap",
-      "url"      : "/medoka-encoding",
-      "date"     : "May 14, 2020"
-    } ,
-  
-    {
       "title"    : "The Engram",
       "category" : "",
       "tags"     : "Book, Neuroscience, neurons, Memory",
