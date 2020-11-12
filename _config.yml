@@ -8,7 +8,7 @@ logo:
 # Author image is used in site sidebar and greetings in the home page hero text
 author:
   image: 'authorimage.jpg'
-  greetings: "A blog about the stuff that interests me. Includes topics from decentralised systems, algorithms, biology, and more."
+  greetings: "A blog about the stuff that interests me. Includes topics from machine learning, biology, decentralised systems, and more."
 favicon: 'assets/images/favicon.ico'
 baseurl:
 production_url: https://royce.netlify.com/
@@ -27,7 +27,8 @@ thankyou_page_description: "Your message has been successfully sent!"
 twitter: 'LumRamabaja'
 #facebook: 'username'
 github: 'LumRamabaja'
-metoken: '0xd9c796cA89EeDCc26165026FaDBDc3deD42009a8'
+rss: 'lums.blog'
+#metoken: '0xd9c796cA89EeDCc26165026FaDBDc3deD42009a8'
 #codepen: 'username'
 #dribbble: 'username'
 #medium: '@username'
