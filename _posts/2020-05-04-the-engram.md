@@ -3,7 +3,7 @@ layout: post
 title: 'The Engram'
 tags: [Book, Neuroscience, neurons, Memory]
 featured_image_thumbnail:
-featured_image: assets/images/posts/2020/e_l_ancient_doric_column.jpg
+featured_image: assets/images/posts/2020/La-Piana-Edward-Lear.jpg
 ---
 This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the [book](https://lums.blog/The-Competitive-Neuron).
 

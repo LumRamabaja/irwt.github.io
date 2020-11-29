@@ -18,6 +18,13 @@ disqus: 'Lum'
 ga_analytics:
 
 use_math: true
+#markdown: kramdown
+#highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
+
+
 # Contact form setings
 email: lumramabaja@gmail.com
 contact_page_description: "Ask me anything!"

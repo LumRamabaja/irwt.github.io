@@ -3,7 +3,7 @@ layout: post
 title: 'Introduction'
 tags: [Book, Neuroscience, neurons, Memory]
 featured_image_thumbnail:
-featured_image: assets/images/posts/2020/Edward_Lear_-_Corfu_from_Santa_Decca_-_Google_Art_Project.jpg
+featured_image: assets/images/posts/2020/stavronikita.jpg
 ---
 
 This post is part of an ongoing online book. To access the other parts, please refer to the contents page of the [book](https://lums.blog/The-Competitive-Neuron).
