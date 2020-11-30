@@ -1,6 +1,14 @@
 [
   
     {
+      "title"    : "The Self Organizing Tree",
+      "category" : "",
+      "tags"     : "AI, Machine Learning, Unsupervised, SOM",
+      "url"      : "/self-organizing-tree",
+      "date"     : "October 9, 2020"
+    } ,
+  
+    {
       "title"    : "Scaling Blockchains (Part 1) - The Interactive Bloom Proof",
       "category" : "",
       "tags"     : "Blockchain, Bloom Filter, SPV",

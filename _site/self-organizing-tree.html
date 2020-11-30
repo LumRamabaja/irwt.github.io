@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link rel="alternate" type="application/rss+xml" title="lums.blog" href="http://localhost:4000/feed.xml">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The Self Organizing Tree | Lum’s blog</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="The Self Organizing Tree" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The self organizing tree (SOT) is a type of artificial neural network based on the self organizing map (SOM). It uses an unsupervised, competitive learning algorithm to store representations of the input space. Unlike the conventional SOM, where a data point is given to every node of the SOM, in SOTs a forward propagation requires to compute a competition between only $log(N)$ nodes, where $N$ is the number of nodes the model has. This makes the SOT computationally significantly more efficient than a conventional SOM. The neighbourhood of a SOT is also differently defined than in a SOM. While in a 2D SOM, nodes are organized in a grid like fashion, the SOT’s nodes are organized in the form of a binary tree. The binary tree structure allows SOTs to find a best matching unit with fewer steps, however, its computational efficiency comes with a cost. While in the SOM, $N$ nodes can become best matching units, in the SOT only $N/2$ of the nodes can potentially become best matching units. In this short blog post, I’ll only explain the fundamentals of how a SOT works. Why it’s useful and how it can be used, I’ll explain in Part 2." />
+<meta property="og:description" content="The self organizing tree (SOT) is a type of artificial neural network based on the self organizing map (SOM). It uses an unsupervised, competitive learning algorithm to store representations of the input space. Unlike the conventional SOM, where a data point is given to every node of the SOM, in SOTs a forward propagation requires to compute a competition between only $log(N)$ nodes, where $N$ is the number of nodes the model has. This makes the SOT computationally significantly more efficient than a conventional SOM. The neighbourhood of a SOT is also differently defined than in a SOM. While in a 2D SOM, nodes are organized in a grid like fashion, the SOT’s nodes are organized in the form of a binary tree. The binary tree structure allows SOTs to find a best matching unit with fewer steps, however, its computational efficiency comes with a cost. While in the SOM, $N$ nodes can become best matching units, in the SOT only $N/2$ of the nodes can potentially become best matching units. In this short blog post, I’ll only explain the fundamentals of how a SOT works. Why it’s useful and how it can be used, I’ll explain in Part 2." />
+<link rel="canonical" href="http://localhost:4000/self-organizing-tree" />
+<meta property="og:url" content="http://localhost:4000/self-organizing-tree" />
+<meta property="og:site_name" content="Lum’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-09T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="The Self Organizing Tree" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"url":"http://localhost:4000/self-organizing-tree","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/self-organizing-tree"},"headline":"The Self Organizing Tree","dateModified":"2020-10-09T00:00:00+02:00","datePublished":"2020-10-09T00:00:00+02:00","description":"The self organizing tree (SOT) is a type of artificial neural network based on the self organizing map (SOM). It uses an unsupervised, competitive learning algorithm to store representations of the input space. Unlike the conventional SOM, where a data point is given to every node of the SOM, in SOTs a forward propagation requires to compute a competition between only $log(N)$ nodes, where $N$ is the number of nodes the model has. This makes the SOT computationally significantly more efficient than a conventional SOM. The neighbourhood of a SOT is also differently defined than in a SOM. While in a 2D SOM, nodes are organized in a grid like fashion, the SOT’s nodes are organized in the form of a binary tree. The binary tree structure allows SOTs to find a best matching unit with fewer steps, however, its computational efficiency comes with a cost. While in the SOM, $N$ nodes can become best matching units, in the SOT only $N/2$ of the nodes can potentially become best matching units. In this short blog post, I’ll only explain the fundamentals of how a SOT works. Why it’s useful and how it can be used, I’ll explain in Part 2.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="http://localhost:4000/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	 <link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <!--<link rel="stylesheet1" href="/css/native.css" type="text/css" /> -->
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Lum Ramabaja</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Welcome to my blog</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/LumRamabaja" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/LumRamabaja" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <a href="/feed.xml" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+</p>
+
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2020-10-09">
+                    October 9, 2020
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">The Self Organizing Tree</h1>
+            
+            <p class="post-tags">
+                <a href="/tags/index.html#AI"
+                    rel="tag">AI</a>
+                <a href="/tags/index.html#Machine+Learning"
+                    rel="tag">Machine Learning</a>
+                <a href="/tags/index.html#Unsupervised"
+                    rel="tag">Unsupervised</a>
+                <a href="/tags/index.html#SOM"
+                    rel="tag">SOM</a>
+                
+            </p>
+            
+        </header><!-- .post-header -->
+
+        
+        <div class="post-thumbnail">
+            <img src="assets/images/posts/2020/el_akhridha.jpg" alt="The Self Organizing Tree">
+        </div>
+        
+        <div class="post-content">
+            <p>The self organizing tree (SOT) is a type of artificial neural network based on the self organizing map (<a href="https://en.wikipedia.org/wiki/Self-organizing_map">SOM</a>). It uses an unsupervised, competitive learning algorithm to store representations of the input space. Unlike the conventional SOM, where a data point is given to every node of the SOM, in SOTs a forward propagation requires to compute a competition between only $log(N)$ nodes, where $N$ is the number of nodes the model has. This makes the SOT computationally significantly more efficient than a conventional SOM. The neighbourhood of a SOT is also differently defined than in a SOM. While in a 2D SOM, nodes are organized in a grid like fashion, the SOT’s nodes are organized in the form of a binary tree. The binary tree structure allows SOTs to find a best matching unit with fewer steps, however, its computational efficiency comes with a cost. While in the SOM, $N$ nodes can become best matching units, in the SOT only $N/2$ of the nodes can potentially become best matching units. In this short blog post, I’ll only explain the fundamentals of how a SOT works. Why it’s useful and how it can be used, I’ll explain in Part 2.</p>
+
+<h2 id="introduction---self-organizing-map">Introduction - Self Organizing Map</h2>
+<p>The self organizing map (SOM), also known as the Kohonen map, differs quite a lot from today’s backpropagation-based artificial neural networks. While backpropagation-based neural nets correct their weights by computing gradients according to a cost function, nodes in SOMs update their weights through <a href="https://en.wikipedia.org/wiki/Competitive_learning">competitive learning</a>. In competitive learning, nodes in a network compete for the right to activate for a certain input. As a result, each node specializes overtime to fire only when a specific input is given. This specialization of nodes caused by competition, can also be viewed as a variant of <a href="https://en.wikipedia.org/wiki/Hebbian_learning">Hebbian learning</a>.</p>
+
+<p>To prevent confusion, when learning about SOMs, it’s best to forget anything you know about neural networks. There are no activation functions, no backpropagation, no dot product between inputs and weights. The architecture of a (2D) SOM simply consists of a grid of neurons (also known as units, or nodes). Each node of the SOM is fully connected to the input layer, as shown in figure 1.</p>
+
+<p align="center">
+  <img width="300" height="300" src="/assets/images/posts/2020/som1.png" />
+  <em><br />Figure 1. Illustration of a SOM architecture.</em>
+</p>
+
+<p>As SOMs are trained in an unsupervised way, no targets are necessary to train it. After the weights of the model are initialized, competitive learning is used during training. The steps of the learning algorithm are straightforward:</p>
+<ul>
+  <li>Compute the Euclidean distance of the input vector and the weight vectors of the SOM.</li>
+  <li>Find the node with the smallest distance. This node is also called the <strong>best matching unit</strong> (BMU).</li>
+  <li>The BMU neighbourhood radius is calculated. The neighbourhood radius usually starts as a large value and gradually decreases with every time step (Note: There are SOM variants where the neighbourhood radius does not decrease according to the time step, allowing for online learning without a pre-defined number of iterations).</li>
+  <li>The weight vector of every node inside this neighbourhood radius is adjusted to become more similar to the input vector. The further away a node is from the BMU, the less its weights are updated.</li>
+  <li>Repeat all steps for N iterations.</li>
+</ul>
+
+<p align="center">
+  <img width="650" height="650" src="/assets/images/posts/2020/som2.png" />
+  <em><br />Figure 2. Illustration of the SOM's neighbourhood radius changing with every iteration.</em>
+</p>
+
+<p>Because of the competitive learning algorithm, SOMs are able to preserve the topological properties of the input space, allowing for nice visualizations. SOMs in fact are rarely used for anything else these days, but as we will see in future posts, the core ideas of SOMs can be quite useful. A nice SOM implementation in PyTorch can be found <a href="https://github.com/giannisnik/som">here</a>. If you want to know more about the SOM implementation, <a href="http://www.ai-junkie.com/ann/som/som1.html">AI-Junkie’s</a> blog post goes in great depth.</p>
+
+<h2 id="self-organizing-tree">Self Organizing Tree</h2>
+<p>In a SOM, we have to calculate the Euclidean distances between the input vector and all the weight vectors. For large SOMs, this can be computationally demanding. In the SOT on the other hand, we have to calculate only $2 * log(N)$ Euclidean distances, where $N$ is the number of nodes in the SOT. That is because the SOT’s architecture - it is structured as a binary tree (see figure 3).</p>
+
+<p align="center">
+  <img width="650" height="650" src="/assets/images/posts/2020/sot1.png" />
+  <em><br />Figure 3. The architecture of a self organizing tree. Every node contains a weight vector.</em>
+</p>
+
+<p>Before going into how the learning algorithm of the SOT works, let’s first have a closer look at the architecture. In figure 3, I have labeled every node with an index. The indices serve just for clarification. The node with the zero index represents our input vector, or our <strong>input node</strong>. Every other node in the tree contains a weight vector that has the same size as the input vector. The nodes of the tree that do not have any children, are also known as <strong>leaf nodes</strong>. In contrast to SOMs, where every node can potentially become the BMU for an input, in the SOT only leaf nodes can become BMUs. The intermediate nodes in the tree, i.e. the ones that have children, are known as <strong>Non-leaf nodes</strong>, or simply as <strong>parent nodes</strong>. The number of layers per tree is also known as the tree <strong>depth</strong> (denoted as $D$). A tree with 16 leaf nodes for example, will have a depth of 4.</p>
+
+<p align="center">
+  <img width="650" height="650" src="/assets/images/posts/2020/sot2.png" />
+  <em><br />Figure 4. An input vector propagating through the self organizing tree. The nodes inside the blue line, represent the nodes that won the layer-wise competitions.</em>
+</p>
+
+<p>When training a SOT, instead of feeding the input vector to every single node in the tree, we simply feed it to the children of the input layer (nodes $1$ and $2$). We then compute the Euclidean distance for the two nodes. The node that wins the competition, i.e. the node with the smallest distance, feeds the input vector to its children. The competition repeats until two leaf nodes are reached (see figure 4). As we can see, in the SOT, only two nodes compete with one another per layer. After $D$ iterations, the input vector will have passed through the tree and will have reached two leaf nodes, where the last competition is calculated. The winning leaf node represents the BMU.</p>
+
+<p align="center">
+  <img width="650" height="650" src="/assets/images/posts/2020/sot3.png" />
+  <em><br />Figure 5. An illustration showing how nodes in a tree are updated in clusters. The BMU (node 20) is updated the most. Its parent node and its other branch get updated slightly less. The parent node of the parent node, and its other branch get updated even less, and so on. The learning rate diminishes the further away we get from the BMU in the tree.</em>
+</p>
+
+<p>After finding the BMU for a given input vector, the weight vector of every node is adjusted to become more similar to the input vector (see figure 5). The learning rates for the updates are “tree-depth-dependent”. We will have $D$ learning rates, ordered in decreasing order. The BMU is updated with the largest learning rate, adjusting it closer to the input vector. When we go one level up the tree (to the BMU’s parent node), the parent node and its other branch will be updated with the second learning rate, which is slightly smaller than the BMU’s learning rate. The higher we go up the tree, the less every branch and parent gets updated. An implementation of the self organizing tree can be found in this <a href="https://github.com/LumRamabaja/Self-Organizing-Tree/blob/main/SOT.py">Github repository</a>.</p>
+
+<p>After some iterations, the nodes of the SOT will specialize to fire to specific inputs. The code below is an example of how to train a simple SOT with 32 leaf nodes on the <a href="https://github.com/zalandoresearch/fashion-mnist">fashion-mnist</a> dataset.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">SOT</span> <span class="kn">import</span> <span class="n">SOT</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+<span class="n">training_set</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="s">"~/.pytorch/F_MNIST_data"</span><span class="p">,</span> <span class="n">download</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">train</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span><span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">training_set</span><span class="p">,</span>  
+                            <span class="n">shuffle</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>  
+                            <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  
+                            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">0</span>  
+                            <span class="p">)</span>
+
+<span class="c1"># initialize self organizing tree
+</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s">'cpu'</span><span class="p">)</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">SOT</span><span class="p">(</span><span class="n">number_of_leaves</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+                <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">,</span>
+                <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+               <span class="p">)</span>
+
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">train_dataloader</span><span class="p">:</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">bmu</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;=</span> <span class="n">iterations</span><span class="p">:</span>
+        <span class="k">break</span>
+</code></pre></div></div>
+
+<p>After a few iterations, patterns will start to emerge in the weight vectors of the SOT (see figure 6).
+SOTs have an interesting attribute: The further away we go from the leaf nodes, i.e. the closer we get to the input node, the less meaningful the weights get (see figure 7). The first two nodes of the SOT are basically just blobs. The deeper we get in the tree however, the more specialized the nodes will be.</p>
+
+<p align="center">
+  <img width="1000" height="1000" src="/assets/images/posts/2020/sot_filters.png" />
+  <em><br />Figure 6. The weight vectors of three leaf nodes taken from from the SOT that was trained on the fashion-mnist dataset. Darker regions represent weight values close to zero, whereas lighter regions represent weight values closer to one. Leaf nodes are the most specialized nodes in the SOT.</em>
+</p>
+
+<p align="center">
+  <img width="500" height="500" src="/assets/images/posts/2020/sot_weak_filter.png" />
+  <em><br />Figure 7. The weight vectors of the first two nodes of the SOT. Darker regions represent weight values close to zero, whereas lighter regions represent weight values closer to one. The first nodes are the least specialized nodes in the SOT.</em>
+</p>
+
+<p>The necessary lack of specialization of the non-leaf nodes that are close to the input node, can be problematic when performing a forward pass. If for some reason a wrong turn is taken during propagation, the input vectors can end up landing at the wrong leaf node and mess up the state of the already specialized nodes. Logically, the more possible states an input vector can have, the more likely it gets for an input vector to make a mistake during propagation, compared to a case where we have less possible states. To better understand the problem, Lets take an example (see figure 8 as a reference): Lets say a certain input vector, $X_a$, usually gets mapped at node $29$, or at a leaf node close to $29$. This region of the tree is specialized to fire whenever it sees $X_a$. Now lets say another input $X_b$ propagates through the tree and lands at leaf node $24$. If this happens often enough, the weight vector at node $2$ might change just about enough so that next time $X_a$ appears, instead of taking the path through node $2$, it propagates through node $1$ and lands at node $20$, which was already specialized for another pattern.</p>
+
+<p align="center">
+  <img width="650" height="650" src="/assets/images/posts/2020/sot_wrong_path.png" />
+  <em><br />Figure 8. An illustration how a "path" through the tree can overtime get erased by other input vector, causing input vectors to land at the wrong leaf nodes.</em>
+</p>
+
+<p>This flaw is a dealbreaker. Having a self organizing map variant that requires only $log(N)$ competitions is great, but not if it means sacrificing the ability to preserve the topological properties of the input space. Not everything might be lost however. If the input vectors are not too large, and the patterns that can occur are not too numerous, such erasures might not have to occur at all. Lets see how that works.</p>
+
+<h2 id="convolutional-self-organizing-tree">Convolutional Self Organizing tree</h2>
+<p>You can find an implementation of a 2D convolutional self organizing tree (ConvSOT) <a href="https://github.com/LumRamabaja/Self-Organizing-Tree">here</a>. The ConvSOT simply combines the idea of convolutional neural networks (<a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">CNN</a>) with the SOT. Before feeding the input vector to the model, we divide it into overlapping local image patches of size $z \times z$, where $z$ is the kernel size. Instead of having the internal weights of the SOT as large as the whole input vector itself, the weights of each node are also only $z \times z$ in size. Inside the SOT, each patch of the input propagates through the tree in parallel.</p>
+
+<p align="center">
+  <img width="600" height="600" src="/assets/images/posts/2020/convsot1.png" />
+  <em><br />Figure 9. Illustration of how an input gets fed to the convolutional self organizing tree. Each input gets divided into overlapping patches of size z x z, which then get fed in parallel to the tree.</em>
+</p>
+
+<p>The weight vectors of the SOT then get updated by taking the mean of the weight adjustments for each input patch. Since the kernel sizes are relatively small compared to the input vector, the possible shapes that we will find in these patches is also relatively small. This alone should be enough to prevent path erasures in the tree and keep the topology preserving property of regular SOMs. And this is exactly what we will see when training such a tree (see figure 10): Overtime the tree will learn various basic shapes in the different branches of the tree.</p>
+
+<p align="center">
+  <img width="600" height="600" src="/assets/images/posts/2020/conv_sot.png" />
+  <em><br />Figure 10. Illustration of the internal weight vectors of a trained convolutional self organizing tree.</em>
+</p>
+
+<p>The output of the ConvSOT layer will be a $L\times K$ matrix of leaf node indices, where $L$ represents the number of image patches in the rows of the input matrix, and $K$ represents the number of patches in the columns of the input matrix. As you can probably already notice, We could stack additional convolutional self organizing tree “layers” on top of the first layer, feeding the output of one layer to the next. We could do that, though I will not do that here. But for those who want to code this capability, it’s important to note that after the first hidden layer, the next layers cannot use the Euclidean distance for the competitions. I might clarify this in a future post.</p>
+
+<p>Great, now we know how a convolutional self organizing tree works, but how does one use them? Or more exactly, <strong>why</strong> would one want to use SOTs in the first place? In Part 2 of this blog series, I’ll explain how we can combine the self organizng tree with autoencoders, and build something really cool and useful :)</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=The+Self+Organizing+Tree&amp;url=https://royce.netlify.com/self-organizing-tree">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://royce.netlify.com/self-organizing-tree">Facebook</a>
+            </div><!-- .share-post -->
+        </footer>
+        
+<section id="comments-area" class="comments-area">
+    <h2 class="comments-title">Comments</h2>
+    <div class="comments-inside">
+        <div id="disqus_thread"></div>
+    </div><!-- .comments-inside -->
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section><!-- .comments-area -->
+<script type="text/javascript">
+    var disqus_shortname = 'Lum';
+    var disqus_developer = 0;
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = window.location.protocol + '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+</section>
+
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="October 2, 2020">October 2, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/scaling-blockchains-part1-ibp">Scaling Blockchains (Part 1) - The Interactive Bloom Proof</a>
+                </h3>
+                <p class="post-tags">
+                    
+                    
+                    
+                    <a href='/tag/blockchain/'>Blockchain</a>
+                    
+                    
+                    
+                    <a href='/tag/bloom-filter/'>Bloom filter</a>
+                    
+                    
+                    
+                    <a href='/tag/spv/'>Spv</a>
+                    
+                    
+                    
+                </p>
+            </header>
+        </article>
+        
+        
+    </section><!-- .read-next -->
+
+    <!-- Create a sorted array of tags -->
+     
+    <section class="tagcloud inner">
+        <h2 class="tagcloud-title">Tags</h2>
+        <div class="tag-links">
+            
+            <a href='/tags/#AI'>AI</a>
+            
+            <a href='/tags/#Blockchain'>Blockchain</a>
+            
+            <a href='/tags/#Bloom+Filter'>Bloom Filter</a>
+            
+            <a href='/tags/#Book'>Book</a>
+            
+            <a href='/tags/#Ethereum'>Ethereum</a>
+            
+            <a href='/tags/#Machine+Learning'>Machine Learning</a>
+            
+            <a href='/tags/#Memory'>Memory</a>
+            
+            <a href='/tags/#Neuroscience'>Neuroscience</a>
+            
+            <a href='/tags/#Paper'>Paper</a>
+            
+            <a href='/tags/#SOM'>SOM</a>
+            
+            <a href='/tags/#SPV'>SPV</a>
+            
+            <a href='/tags/#Unsupervised'>Unsupervised</a>
+            
+            <a href='/tags/#Vector+Clock'>Vector Clock</a>
+            
+            <a href='/tags/#neurons'>neurons</a>
+            
+        </div><!-- .tag-links -->
+    </section><!-- .tagcloud -->
+
+</main><!-- .site-main -->
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Lum Ramabaja</a> &copy; 2020. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+    }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
